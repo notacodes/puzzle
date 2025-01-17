@@ -1,0 +1,57 @@
+body {
+    margin: 0;
+    height: 100vh;
+    background-color: #f9f9f9;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: "Gloria Hallelujah", cursive;
+    font-size: 16px;
+    line-height: 1.8;
+    background-image: url("paper.gif");
+}
+#puzzle{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+#puzzle-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+    gap: 1px;
+    width: 400px;
+    height: 400px;
+    box-sizing: border-box;
+    position: relative; /
+}
+
+.puzzle-item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2em;
+    transition: transform 0.2s ease-in-out;
+    cursor: pointer;
+    box-sizing: border-box;
+    position: absolute;
+    width: 100px;
+    height: 100px;
+}
+
+.empty {
+    background-color: transparent;
+    pointer-events: none;
+}
+#puzzle-number{
+    width: 70px;
+    height: 70px;
+}
+#dialog-content {
+    width: 500px;
+    padding: 20px;
+    height: 300px;
+}
+
+

@@ -1,0 +1,19 @@
+{
+  "name": "websocket-server",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.17"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.47.10",
+    "canvas-confetti": "^1.9.3",
+    "firebase": "^11.1.0",
+    "http": "^0.0.1-security",
+    "wired-elements": "^3.0.0-rc.6",
+    "ws": "^8.18.0"
+  }
+}

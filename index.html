@@ -1,0 +1,43 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="src/output.css" />
+    <link rel="stylesheet" href="src/style.css" />
+    <link
+            href="https://fonts.googleapis.com/css?family=Gloria+Hallelujah&display=swap"
+            rel="stylesheet"
+    />
+    <script type="module" src="https://unpkg.com/wired-elements/lib/wired-dialog.js?module"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script type="module" src="https://unpkg.com/wired-elements/lib/wired-button.js?module"></script>
+    <title>Slide Puzzle</title>
+</head>
+<body>
+<section id="puzzle">
+<wired-card>
+    <div id="puzzle-container"></div>
+</wired-card>
+<div>
+<wired-button class="m-6 text-2xl" elevation="2" id="shuffle" fill="red">Do Another!</wired-button>
+<wired-button class="m-6 text-2xl" elevation="2" id="goBigger">Go Bigger</wired-button>
+</div>
+<br><button id="copyButton">Link teilen</button>
+<h3 id="counter">0</h3>
+    <h3 id="timer">00:00</h3>
+<div id="results"></div>
+    <wired-dialog closed class="w-60">
+        <div id="dialog-content">
+            <h1 class="mb-4 text-4xl" id="dialog-title">Congratulations!</h1>
+            <p id="dialog-text">You solved the puzzle in <span id="dialog-moves">0</span> moves.</p>
+            <wired-button id="dialog-close">Close</wired-button>
+        </div>
+    </wired-dialog>
+</section>
+<script type="module" src="script.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+</body>
+</html>

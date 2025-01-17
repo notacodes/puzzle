@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Multiplayer Puzzle</title>
+  <script type="module" src="https://unpkg.com/wired-elements/lib/wired-button.js?module"></script>
+  <script type="module" src="https://unpkg.com/wired-elements/lib/wired-card.js?module"></script>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 0;
+      height: 100vh;
+      background-color: #f9f9f9;
+    }
+    #puzzle-container {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      grid-template-rows: repeat(4, 1fr);
+      gap: 1px;
+      width: 300px;
+      height: 300px;
+      box-sizing: border-box;
+      position: relative; /
+    }
+
+    .puzzle-item {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 2em;
+      transition: transform 0.2s ease-in-out;
+      cursor: pointer;
+      box-sizing: border-box;
+      position: absolute;
+      width: 100px;
+      height: 100px;
+      padding: 0;
+    }
+
+    .empty {
+      background-color: transparent;
+      pointer-events: none;
+    }
+    .puzzle-text{
+      width: 70px;
+        height: 70px;
+      margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+  </style>
+</head>
+<body>
+<button id="createLobby">Erstelle Lobby</button>
+<input type="text" id="lobbyCodeInput" placeholder="Lobby Code">
+<button id="joinLobby">Tritt der Lobby bei</button>
+<button class="m-6 text-2xl" id="startGame">Start Game</button>
+
+<wired-card>
+  <div id="puzzle-container"></div>
+</wired-card>
+<script>
+  const socket = new WebSocket('ws://localhost:8080');
+  let lobbyCode = null;
+  let tilesize = 100;
+  let size = 3;
+  socket.onmessage = (event) => {
+    const data = JSON.parse(event.data);
+
+    switch (data.action) {
+      case 'lobbyCreated':
+        alert(`Lobby erstellt! Code: ${data.code}`);
+        lobbyCode = data.code;
+        break;
+      case 'lobbyJoined':
+        alert(`Erfolgreich der Lobby ${data.code} beigetreten!`);
+        break;
+      case 'gameStarted':
+        const puzzleContainer = document.querySelector("#puzzle-container");
+        puzzleContainer.style.width = `${size * tilesize}px`;
+        puzzleContainer.style.height = `${size * tilesize}px`;
+        puzzle = data.puzzle;
+        console.log(puzzle);
+        renderPuzzle();
+        break;
+      case 'updatePuzzle':
+        puzzle = data.puzzle;
+        renderPuzzle(puzzle);
+        break;
+      case 'gameOver':
+       clearPuzzle();
+        alert('Das Puzzle wurde gelöst!');
+        break;
+    }
+  };
+  document.getElementById('createLobby').onclick = () => {
+    socket.send(JSON.stringify({ action: 'createLobby' }));
+  };
+
+  document.getElementById('joinLobby').onclick = () => {
+    const code = document.getElementById('lobbyCodeInput').value;
+    socket.send(JSON.stringify({ action: 'joinLobby', code }));
+  };
+
+  document.getElementById('startGame').onclick = () => {
+    socket.send(JSON.stringify({ action: 'startGame', size: size}));
+  }
+</script>
+<script src="script_multiplayer.js"></script>
+</body>
+</html>

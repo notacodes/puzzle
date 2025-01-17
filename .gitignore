@@ -1,0 +1,36 @@
+# Node.js modules
+/node_modules/
+
+# WebStorm project files
+.idea/
+
+# VSCode project files (falls du auch mit VSCode arbeitest)
+.vscode/
+
+# Log-Dateien und temporäre Dateien
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+
+# Betriebssystem-spezifische Dateien
+.DS_Store           # macOS
+Thumbs.db           # Windows
+
+# Tailwind CSS (wenn du das Build-System verwendest)
+/.next/              # Wenn du Next.js benutzt (falls zutreffend)
+/dist/               # Für generierte Dist-Ordner
+/build/              # Auch für generierte Build-Dateien
+public/assets/       # Je nach Verzeichnisstruktur
+
+# JetBrains IDEs (wenn du WebStorm verwendest)
+.idea/*
+
+# Tyepscript Output-Dateien (falls du mit TypeScript arbeitest)
+*.tsbuildinfo
+
+# Um die .env Datei zu schützen (wenn vorhanden)
+.env
+
+# Package Lock Dateien (optional, wenn du diesen nicht im Repo brauchst)
+package-lock.json
+yarn.lock
