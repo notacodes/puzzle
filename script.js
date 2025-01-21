@@ -18,7 +18,6 @@ document.addEventListener("DOMContentLoaded", () => {
     handleInput();
 });
 
-// Funktion zur Erzeugung eines deterministischen Zufallszahlengenerators basierend auf einem Seed
 function seededRandom(seed) {
     const x = Math.sin(seed++) * 10000;
     return x - Math.floor(x);
@@ -44,7 +43,6 @@ function randomizePuzzleWithSeed(seed) {
     renderPuzzle();
 }
 
-// Funktion zur Erzeugung von zufälligen Puzzleteilen basierend auf einem Seed
 function getRandomValuesWithSeed(seed) {
     const values = Array.from({ length: size * size }, (_, i) => i + 1);
     const randomValues = [];
@@ -52,32 +50,40 @@ function getRandomValuesWithSeed(seed) {
     for (let i = 0; i < size * size; i++) {
         const randomIndex = Math.floor(seededRandom(seed) * values.length);
         randomValues.push(values.splice(randomIndex, 1)[0]);
-        seed++; // Inkremetierung des Seeds für die nächste Zufallszahl
+        seed++;
     }
 
     return randomValues;
 }
 
-// Funktion zur Überprüfung der URL auf einen Seed und zur Initialisierung des Puzzles
 function loadPuzzleFromURL() {
     const urlParams = new URLSearchParams(window.location.search);
     const seed = urlParams.get("seed");
+    const urlSize = urlParams.get("size");
+
+    // Setze die Größe aus der URL, falls vorhanden
+    if (urlSize) {
+        size = parseInt(urlSize);
+        puzzleContainer.style.width = `${size * tilesize}px`;
+        puzzleContainer.style.height = `${size * tilesize}px`;
+    }
+
+    generatePuzzle(); // Generiere das Puzzle mit der korrekten Größe
 
     if (seed) {
         console.log("Seed gefunden:", seed);
-        randomizePuzzleWithSeed(parseInt(seed)); // Puzzle mit dem Seed aus der URL initialisieren
+        randomizePuzzleWithSeed(parseInt(seed));
     } else {
-        const newSeed = Math.floor(Math.random() * 1000000); // Generiere einen neuen zufälligen Seed
+        const newSeed = Math.floor(Math.random() * 1000000);
         console.log("Kein Seed gefunden. Neuer Seed generiert:", newSeed);
-        randomizePuzzleWithSeed(newSeed); // Puzzle mit dem neuen Seed initialisieren
-        updateURLWithSeed(newSeed); // URL mit dem neuen Seed aktualisieren
+        randomizePuzzleWithSeed(newSeed);
+        updateURLWithSeed(newSeed);
     }
 }
 
-// Funktion zum Aktualisieren der URL mit dem Seed
 function updateURLWithSeed(seed) {
-    const newURL = `${window.location.origin}${window.location.pathname}?seed=${seed}`;
-    history.replaceState(null, "", newURL); // URL mit dem Seed aktualisieren, ohne die Seite neu zu laden
+    const newURL = `${window.location.origin}${window.location.pathname}?seed=${seed}&size=${size}`;
+    history.replaceState(null, "", newURL);
 }
 
 // Puzzle Container und Initialisierungen
@@ -190,7 +196,12 @@ function biggerPuzzle() {
     puzzleContainer.style.width = `${size * tilesize}px`;
     puzzleContainer.style.height = `${size * tilesize}px`;
     generatePuzzle();
-    const newSeed = Math.floor(Math.random() * 1000000);
+
+    // Verwende den aktuellen Seed aus der URL, falls vorhanden
+    const urlParams = new URLSearchParams(window.location.search);
+    const currentSeed = urlParams.get("seed");
+    const newSeed = currentSeed ? parseInt(currentSeed) : Math.floor(Math.random() * 1000000);
+
     randomizePuzzleWithSeed(newSeed);
     updateURLWithSeed(newSeed);
     renderPuzzle();

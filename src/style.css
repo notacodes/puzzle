@@ -8,7 +8,7 @@ body {
     font-family: "Gloria Hallelujah", cursive;
     font-size: 16px;
     line-height: 1.8;
-    background-image: url("paper.gif");
+    background-image: url("background.png");
 }
 #puzzle{
     display: flex;

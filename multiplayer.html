@@ -64,8 +64,9 @@
   <div id="puzzle-container"></div>
 </wired-card>
 <script>
-  const socket = new WebSocket('ws://localhost:8080');
-  let lobbyCode = null;
+  const socket = new WebSocket('wss://one5puzzle-server.onrender.com');
+
+let lobbyCode = null;
   let tilesize = 100;
   let size = 3;
   socket.onmessage = (event) => {
