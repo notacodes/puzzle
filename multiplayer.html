@@ -6,6 +6,10 @@
   <script type="module" src="https://unpkg.com/wired-elements/lib/wired-button.js?module"></script>
   <script type="module" src="https://unpkg.com/wired-elements/lib/wired-card.js?module"></script>
   <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.23/dist/full.min.css" rel="stylesheet" type="text/css" />
+  <link
+          href="https://fonts.googleapis.com/css?family=Gloria+Hallelujah&display=swap"
+          rel="stylesheet"
+  />
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     body {
@@ -15,6 +19,7 @@
       margin: 0;
       height: 100vh;
       background-color: #f9f9f9;
+      font-family: "Gloria Hallelujah", cursive;
     }
     #puzzle-container {
       display: grid;
@@ -47,80 +52,99 @@
     }
     .puzzle-text{
       width: 70px;
-        height: 70px;
+      height: 70px;
       margin: 0;
-        padding: 0;
-        display: flex;
-        justify-content: center;
-        align-items: center;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
   </style>
 </head>
 <body data-theme="retro">
-<div class="navbar bg-base-100">
-  <div class="navbar-start">
-    <div class="dropdown">
-      <div tabindex="0" role="button" class="btn btn-ghost lg:hidden">
-        <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-5 w-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor">
-          <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M4 6h16M4 12h8m-8 6h16" />
-        </svg>
-      </div>
-      <ul
-              tabindex="0"
-              class="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow">
-        <li><a>Item 1</a></li>
+<div class="w-screen h-screen">
+  <div class="w-screen h-screen grid grid-cols-[1fr_3fr_1fr] grid-rows-[h-screen] gap-4">
+
+    <div class="m-6">
+      <button id="hallo" class="bg-accent w-auto rounded-box mt-3 mb-3 btn h-auto p-4 text-5xl" onclick="window.location.href='index.html?size=3';">
+        Sliding 15
+      </button>
+
+      <ul class="menu bg-base-200 rounded-box w-auto">
+        <p class="text-3xl m-3">Puzzles</p>
         <li>
-          <a>Parent</a>
-          <ul class="p-2">
-            <li><a>Submenu 1</a></li>
-            <li><a>Submenu 2</a></li>
-          </ul>
+          <a class="text-2xl" href="index.html?size=3">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5">
+              <path d="M12 4.467c0-.405.262-.75.559-1.027.276-.257.441-.584.441-.94 0-.828-.895-1.5-2-1.5s-2 .672-2 1.5c0 .362.171.694.456.953.29.265.544.6.544.994a.968.968 0 0 1-1.024.974 39.655 39.655 0 0 1-3.014-.306.75.75 0 0 0-.847.847c.14.993.242 1.999.306 3.014A.968.968 0 0 1 4.447 10c-.393 0-.729-.253-.994-.544C3.194 9.17 2.862 9 2.5 9 1.672 9 1 9.895 1 11s.672 2 1.5 2c.356 0 .683-.165.94-.441.276-.297.622-.559 1.027-.559a.997.997 0 0 1 1.004 1.03 39.747 39.747 0 0 1-.319 3.734.75.75 0 0 0 .64.842c1.05.146 2.111.252 3.184.318A.97.97 0 0 0 10 16.948c0-.394-.254-.73-.545-.995C9.171 15.693 9 15.362 9 15c0-.828.895-1.5 2-1.5s2 .672 2 1.5c0 .356-.165.683-.441.94-.297.276-.559.622-.559 1.027a.998.998 0 0 0 1.03 1.005c1.337-.05 2.659-.162 3.961-.337a.75.75 0 0 0 .644-.644c.175-1.302.288-2.624.337-3.961A.998.998 0 0 0 16.967 12c-.405 0-.75.262-1.027.559-.257.276-.584.441-.94.441-.828 0-1.5-.895-1.5-2s.672-2 1.5-2c.362 0 .694.17.953.455.265.291.601.545.995.545a.97.97 0 0 0 .976-1.024 41.159 41.159 0 0 0-.318-3.184.75.75 0 0 0-.842-.64c-1.228.164-2.473.271-3.734.319A.997.997 0 0 1 12 4.467Z" />
+            </svg>
+            3x3
+          </a>
         </li>
-        <li><a>Item 3</a></li>
+        <li>
+          <a class="text-2xl" href="index.html?size=4">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5">
+              <path d="M12 4.467c0-.405.262-.75.559-1.027.276-.257.441-.584.441-.94 0-.828-.895-1.5-2-1.5s-2 .672-2 1.5c0 .362.171.694.456.953.29.265.544.6.544.994a.968.968 0 0 1-1.024.974 39.655 39.655 0 0 1-3.014-.306.75.75 0 0 0-.847.847c.14.993.242 1.999.306 3.014A.968.968 0 0 1 4.447 10c-.393 0-.729-.253-.994-.544C3.194 9.17 2.862 9 2.5 9 1.672 9 1 9.895 1 11s.672 2 1.5 2c.356 0 .683-.165.94-.441.276-.297.622-.559 1.027-.559a.997.997 0 0 1 1.004 1.03 39.747 39.747 0 0 1-.319 3.734.75.75 0 0 0 .64.842c1.05.146 2.111.252 3.184.318A.97.97 0 0 0 10 16.948c0-.394-.254-.73-.545-.995C9.171 15.693 9 15.362 9 15c0-.828.895-1.5 2-1.5s2 .672 2 1.5c0 .356-.165.683-.441.94-.297.276-.559.622-.559 1.027a.998.998 0 0 0 1.03 1.005c1.337-.05 2.659-.162 3.961-.337a.75.75 0 0 0 .644-.644c.175-1.302.288-2.624.337-3.961A.998.998 0 0 0 16.967 12c-.405 0-.75.262-1.027.559-.257.276-.584.441-.94.441-.828 0-1.5-.895-1.5-2s.672-2 1.5-2c.362 0 .694.17.953.455.265.291.601.545.995.545a.97.97 0 0 0 .976-1.024 41.159 41.159 0 0 0-.318-3.184.75.75 0 0 0-.842-.64c-1.228.164-2.473.271-3.734.319A.997.997 0 0 1 12 4.467Z" />
+            </svg>
+            4x4
+          </a>
+        </li>
+        <li>
+          <a class="text-2xl" href="multiplayer.html">
+            <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-5 w-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor">
+              <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+            </svg>
+            Multiplayer
+          </a>
+        </li>
       </ul>
+      <div class="bg-secondary w-auto rounded-box mt-3 mb-3">
+        <p class="p-4 text-2xl" id="lobbycode">Lobby#??</p>
+        <div class="bg-secondary w-auto rounded-box mt-3 mb-3">
+          <div class="flex justify-between">
+            <p class="p-4 text-xl ">Best Moves:</p><p id="best-moves" class="text-xl p-4"></p>
+          </div>
+          <div class="flex justify-between">
+            <p class="p-4 text-xl">Best Time:</p><p id="best-time" class="text-xl p-4"></p>
+          </div>
+        </div>
+      </div>
     </div>
-    <a class="btn btn-ghost text-xl">daisyUI</a>
-  </div>
-  <div class="navbar-center hidden lg:flex">
-    <ul class="menu menu-horizontal px-1">
-      <li><a>Item 1</a></li>
-      <li>
-        <details>
-          <summary>Parent</summary>
-          <ul class="p-2">
-            <li><a>Submenu 1</a></li>
-            <li><a>Submenu 2</a></li>
-          </ul>
-        </details>
-      </li>
-      <li><a>Item 3</a></li>
-    </ul>
-  </div>
-  <div class="navbar-end">
-    <a class="btn">Button</a>
+
+    <div class="flex items-center justify-center">
+      <wired-card>
+        <div id="puzzle-container">
+
+        </div>
+      </wired-card>
+    </div>
+
+    <div class="bg-primary w-auto rounded-box mt-3 mb-3">
+      <button id="createLobby" class="btn btn-secondary">Create Lobby</button>
+      <select id="puzzleSize" class="select select-bordered w-full max-w-xs">
+        <option value="3">3x3</option>
+        <option value="4">4x4</option>
+        <option value="5">5x5</option>
+      </select>
+      <input type="text" id="lobbyCodeInput" placeholder="Lobby Code" class="input input-bordered w-full max-w-xs">
+      <button id="joinLobby" class="btn btn-secondary">Tritt der Lobby bei</button>
+      <button class="btn btn-secondary" id="startGame">Start Game</button>
+    </div>
+
   </div>
 </div>
-<button id="createLobby">Erstelle Lobby</button>
-<input type="text" id="lobbyCodeInput" placeholder="Lobby Code">
-<button id="joinLobby">Tritt der Lobby bei</button>
-<button class="m-6 text-2xl" id="startGame">Start Game</button>
-
-<wired-card>
-  <div id="puzzle-container"></div>
-</wired-card>
 <script>
   const socket = new WebSocket('wss://one5puzzle-server.onrender.com');
 
-let lobbyCode = null;
+  let lobbyCode = null;
   let tilesize = 100;
   let size = 3;
   socket.onmessage = (event) => {
@@ -130,9 +154,14 @@ let lobbyCode = null;
       case 'lobbyCreated':
         alert(`Lobby erstellt! Code: ${data.code}`);
         lobbyCode = data.code;
+        document.getElementById('lobbycode').innerText = `Lobby#${lobbyCode}`;
+        size = data.size;
         break;
       case 'lobbyJoined':
         alert(`Erfolgreich der Lobby ${data.code} beigetreten!`);
+        size = data.size;
+        document.getElementById('lobbycode').innerText = `Lobby#${data.code}`;
+        console.log(size);
         break;
       case 'gameStarted':
         const puzzleContainer = document.querySelector("#puzzle-container");
@@ -147,13 +176,14 @@ let lobbyCode = null;
         renderPuzzle(puzzle);
         break;
       case 'gameOver':
-       clearPuzzle();
+        clearPuzzle();
         alert('Das Puzzle wurde gelöst!');
         break;
     }
   };
   document.getElementById('createLobby').onclick = () => {
-    socket.send(JSON.stringify({ action: 'createLobby' }));
+    const size = document.getElementById('puzzleSize').value;
+    socket.send(JSON.stringify({ action: 'createLobby', size: parseInt(size) }));
   };
 
   document.getElementById('joinLobby').onclick = () => {
@@ -162,8 +192,9 @@ let lobbyCode = null;
   };
 
   document.getElementById('startGame').onclick = () => {
-    socket.send(JSON.stringify({ action: 'startGame', size: size}));
-  }
+    const size = parseInt(document.getElementById('puzzleSize').value);
+    socket.send(JSON.stringify({ action: 'startGame',size: size }));
+  };
 </script>
 <script src="script_multiplayer.js"></script>
 </body>
