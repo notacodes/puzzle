@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "build:css": "tailwindcss -i ./src/input.css -o ./dist/output.css --watch"
   },
   "devDependencies": {
     "tailwindcss": "^3.4.17"
@@ -11,6 +12,7 @@
   "dependencies": {
     "@supabase/supabase-js": "^2.47.10",
     "canvas-confetti": "^1.9.3",
+    "daisyui": "^4.12.23",
     "firebase": "^11.1.0",
     "http": "^0.0.1-security",
     "wired-elements": "^3.0.0-rc.6",

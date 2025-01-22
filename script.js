@@ -23,24 +23,60 @@ function seededRandom(seed) {
     return x - Math.floor(x);
 }
 
-// Funktion zur Initialisierung und Randomisierung des Puzzles mit einem Seed
 function randomizePuzzleWithSeed(seed) {
-    if (puzzle.length === 0) {
-        generatePuzzle(); // Stelle sicher, dass das Puzzle zuerst generiert wird
-    }
+    let attempt = 0;
 
-    const randomValues = getRandomValuesWithSeed(seed);
-    let i = 0;
+    do {
+        const randomValues = getRandomValuesWithSeed(seed);
+        let i = 0;
 
-    for (let puzzleItem of puzzle) {
-        puzzleItem.value = randomValues[i];
-        puzzleItem.disabled = false;
-        i++;
-    }
+        for (let puzzleItem of puzzle) {
+            puzzleItem.value = randomValues[i];
+            puzzleItem.disabled = false;
+            i++;
+        }
 
-    const emptyPuzzle = puzzle.find((item) => item.value === size * size);
-    emptyPuzzle.disabled = true;
+        const emptyPuzzle = puzzle.find((item) => item.value === size * size);
+        emptyPuzzle.disabled = true;
+
+        seed++;
+        attempt++;
+        if (attempt > 1000) {
+            console.error("Zu viele Versuche, ein lösbares Puzzle zu erstellen.");
+            return;
+        }
+    } while (!isPuzzleSolvable());
+
     renderPuzzle();
+}
+
+
+function isPuzzleSolvable() {
+    let inversions = 0;
+    const flatPuzzle = puzzle.filter(tile => !tile.disabled).map(tile => tile.value);
+
+    // Count inversions
+    for (let i = 0; i < flatPuzzle.length - 1; i++) {
+        for (let j = i + 1; j < flatPuzzle.length; j++) {
+            if (flatPuzzle[i] > flatPuzzle[j]) {
+                inversions++;
+            }
+        }
+    }
+
+    // Find the position of the empty tile (row from bottom)
+    const emptyTile = puzzle.find(tile => tile.disabled);
+    const emptyRow = Math.ceil(emptyTile.position / size);
+    const rowFromBottom = size - emptyRow + 1;
+
+    // For odd grid sizes, the number of inversions must be even
+    if (size % 2 === 1) {
+        return inversions % 2 === 0;
+    }
+    // For even grid sizes, the sum of inversions and the row of the empty tile (from bottom) must be odd
+    else {
+        return (inversions + rowFromBottom) % 2 === 1;
+    }
 }
 
 function getRandomValuesWithSeed(seed) {
@@ -61,23 +97,25 @@ function loadPuzzleFromURL() {
     const seed = urlParams.get("seed");
     const urlSize = urlParams.get("size");
 
-    // Setze die Größe aus der URL, falls vorhanden
     if (urlSize) {
         size = parseInt(urlSize);
         puzzleContainer.style.width = `${size * tilesize}px`;
         puzzleContainer.style.height = `${size * tilesize}px`;
     }
 
-    generatePuzzle(); // Generiere das Puzzle mit der korrekten Größe
-
+    generatePuzzle();
     if (seed) {
         console.log("Seed gefunden:", seed);
         randomizePuzzleWithSeed(parseInt(seed));
+        const puzzlename = document.getElementById("puzzle-seed");
+        puzzlename.innerHTML = `Puzzle#${seed}`;
     } else {
         const newSeed = Math.floor(Math.random() * 1000000);
         console.log("Kein Seed gefunden. Neuer Seed generiert:", newSeed);
         randomizePuzzleWithSeed(newSeed);
         updateURLWithSeed(newSeed);
+        const puzzlename = document.getElementById("puzzle-seed");
+        puzzlename.innerHTML = `Puzzle#${newSeed}`;
     }
 }
 
@@ -86,7 +124,6 @@ function updateURLWithSeed(seed) {
     history.replaceState(null, "", newURL);
 }
 
-// Puzzle Container und Initialisierungen
 function generatePuzzle() {
     puzzle = [];
     for (let i = 1; i <= size * size; i++) {
@@ -100,7 +137,6 @@ function generatePuzzle() {
     }
 }
 
-// Hilfsfunktionen für die Berechnung der Zeilen und Spalten
 function getRow(pos) {
     return Math.ceil(pos / size);
 }
@@ -110,7 +146,6 @@ function getCol(pos) {
     return col === 0 ? size : col;
 }
 
-// Funktion zur Darstellung des Puzzles auf der Seite
 function renderPuzzle() {
     puzzleContainer.innerHTML = "";
     for (let puzzleItem of puzzle) {
@@ -127,7 +162,6 @@ function renderPuzzle() {
     }
 }
 
-// Funktion, die aufgerufen wird, wenn ein Puzzleteil angeklickt wird
 function handleTileClick(clickedTile) {
     const emptyTile = getEmptyPuzzle();
     moveTileIfValid(clickedTile, emptyTile);
@@ -137,22 +171,22 @@ function handleTileClick(clickedTile) {
     }
 }
 
-// Funktion zur Berechnung des leeren Puzzleteils
 function getEmptyPuzzle() {
     return puzzle.find((tile) => tile.disabled);
 }
 
-// Funktion zur Überprüfung, ob das Puzzle korrekt gelöst ist
 function isPuzzleSolved() {
-    for (let i = 0; i < puzzle.length; i++) {
-        if (puzzle[i].value !== puzzle[i].position) {
+    for (let tile of puzzle) {
+        const expectedX = ((tile.value - 1) % size) * tilesize;
+        const expectedY = Math.floor((tile.value - 1) / size) * tilesize;
+
+        if (tile.x !== expectedX || tile.y !== expectedY) {
             return false;
         }
     }
     return true;
 }
 
-// Funktion zur Bewegung eines Puzzleteils, falls die Bewegung gültig ist
 function moveTileIfValid(tile, emptyTile) {
     const isAdjacent = Math.abs(tile.x - emptyTile.x) + Math.abs(tile.y - emptyTile.y) === tilesize;
     if (isAdjacent) {
@@ -182,7 +216,9 @@ function shufflePuzzle() {
     const newSeed = Math.floor(Math.random() * 1000000);
     randomizePuzzleWithSeed(newSeed);
     updateURLWithSeed(newSeed);
-    renderPuzzle();
+    const puzzlename = document.getElementById("puzzle-seed");
+    puzzlename.innerHTML = `Puzzle#${newSeed}`;
+
 }
 
 const goBigger = document.getElementById("goBigger");
@@ -197,7 +233,6 @@ function biggerPuzzle() {
     puzzleContainer.style.height = `${size * tilesize}px`;
     generatePuzzle();
 
-    // Verwende den aktuellen Seed aus der URL, falls vorhanden
     const urlParams = new URLSearchParams(window.location.search);
     const currentSeed = urlParams.get("seed");
     const newSeed = currentSeed ? parseInt(currentSeed) : Math.floor(Math.random() * 1000000);
@@ -234,17 +269,13 @@ function updateResults() {
 }
 
 function displayResults() {
-    const resultsContainer = document.getElementById("results");
-    resultsContainer.innerHTML = "";
+    const sizeKey = `${size}x${size}`;
+    const bestMoves = results[sizeKey] || "N/A";
+    const bestTime = bestTimes[sizeKey] ? `${Math.floor(bestTimes[sizeKey] / 60)}:${String(bestTimes[sizeKey] % 60).padStart(2, '0')}` : "N/A";
 
-    for (let key in results) {
-        const resultItem = document.createElement("div");
-        const bestTime = bestTimes[key] ? `${Math.floor(bestTimes[key] / 60)}:${String(bestTimes[key] % 60).padStart(2, '0')}` : "N/A";
-        resultItem.textContent = `Puzzle ${key}: ${results[key]} moves, Best Time: ${bestTime}`;
-        resultsContainer.appendChild(resultItem);
-    }
+    document.getElementById("best-moves").textContent = bestMoves;
+    document.getElementById("best-time").textContent = bestTime;
 }
-
 function saveResults() {
     localStorage.setItem("puzzleResults", JSON.stringify(results));
     localStorage.setItem("puzzleBestTimes", JSON.stringify(bestTimes));
@@ -358,6 +389,7 @@ function handleInput() {
 function handleKeyDown(e) {
     const emptyTile = getEmptyPuzzle();
     let neighbor;
+
     switch (e.key) {
         case "ArrowLeft":
             neighbor = getTileByPosition(emptyTile.position + 1, getCol(emptyTile.position) < size);
@@ -372,8 +404,17 @@ function handleKeyDown(e) {
             neighbor = getTileByPosition(emptyTile.position - size, getRow(emptyTile.position) > 1);
             break;
     }
-    if (neighbor) moveTileIfValid(neighbor, emptyTile);
+
+    if (neighbor) {
+        moveTileIfValid(neighbor, emptyTile);
+
+        if (!madeFirstMove) {
+            startTimer();
+            madeFirstMove = true;
+        }
+    }
 }
+
 function getTileByPosition(pos, condition) {
     return condition ? puzzle.find((tile) => tile.position === pos) : null;
 }
@@ -386,7 +427,13 @@ function copyLinkToClipboard() {
     tempInput.setSelectionRange(0, 99999);
     try {
         document.execCommand('copy');
-        console.log('Link wurde in die Zwischenablage kopiert!');
+        const button = document.getElementById('copyButton');
+            const originalText = button.textContent;
+            button.textContent = 'Copied, now paste!';
+
+            setTimeout(() => {
+                button.textContent = originalText;
+            }, 1200);
     } catch (err) {
         console.error('Fehler beim Kopieren des Links:', err);
     }
@@ -400,3 +447,30 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
+function showCustomAlert(message) {
+    const alertContainer = document.getElementById('alert-container');
+    const alert = document.createElement('div');
+    alert.setAttribute('role', 'alert');
+    alert.className = 'alert alert-success';
+    alert.innerHTML = `
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <span>${message}</span>
+    `;
+    alertContainer.appendChild(alert);
+
+    setTimeout(() => {
+        alert.remove();
+    }, 2500);
+}
+
+document.querySelector('button[onclick^="showCustomAlert"]').addEventListener('click', function() {
+    showCustomAlert('Your purchase has been confirmed!');
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('hallo').addEventListener('click', () => {
+        console.log("Hllo");
+    });
+});

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vertical Menu</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            plugins: [require("daisyui")],
+            daisyui: {
+                themes: ["retro"], // DaisyUI Retro-Thema
+            },
+        }
+    </script>
+</head>
+<body class="bg-amber-50 flex flex-col items-center min-h-screen">
+
+<!-- Vertikales Menü -->
+<nav class="bg-primary w-72 p-4 rounded-lg shadow-lg border-4 border-neutral">
+    <ul class="menu bg-base-100 p-2 rounded-lg w-full">
+        <li>
+            <a class="btn btn-sm bg-secondary text-secondary-content border-2 border-black hover:bg-accent doodle-text">
+                Home
+            </a>
+        </li>
+        <li>
+            <a class="btn btn-sm bg-secondary text-secondary-content border-2 border-black hover:bg-accent doodle-text">
+                About
+            </a>
+        </li>
+        <li>
+            <a class="btn btn-sm bg-secondary text-secondary-content border-2 border-black hover:bg-accent doodle-text">
+                Games
+            </a>
+        </li>
+        <li>
+            <a class="btn btn-sm bg-secondary text-secondary-content border-2 border-black hover:bg-accent doodle-text">
+                Contact
+            </a>
+        </li>
+    </ul>
+</nav>
+
+<!-- Hauptinhalt -->
+<div class="card w-80 bg-base-100 shadow-lg p-6 border-4 border-neutral rounded-xl mt-8">
+    <h1 class="card-title text-center font-bold text-lg mb-4">Slide Puzzle</h1>
+
+    <!-- Puzzle Grid -->
+    <div class="grid grid-cols-3 gap-2 border p-4 rounded-lg border-neutral doodle-border bg-neutral-content">
+        <div class="border-2 border-black flex items-center justify-center h-16 w-16">2</div>
+        <div class="border-2 border-black flex items-center justify-center h-16 w-16">4</div>
+        <div class="border-2 border-black flex items-center justify-center h-16 w-16">5</div>
+        <div class="border-2 border-black flex items-center justify-center h-16 w-16">6</div>
+        <div class="border-2 border-black flex items-center justify-center h-16 w-16">3</div>
+        <div class="border-2 border-black flex items-center justify-center h-16 w-16">7</div>
+        <div class="border-2 border-black flex items-center justify-center h-16 w-16">8</div>
+        <div class="border-2 border-black flex items-center justify-center h-16 w-16"> </div>
+        <div class="border-2 border-black flex items-center justify-center h-16 w-16">1</div>
+    </div>
+</div>
+
+</body>
+</html>

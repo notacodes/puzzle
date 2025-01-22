@@ -1,12 +1,17 @@
-/** @type {import('tailwindcss').Config} */
 module.exports = {
+  content: ['./src/**/*.{html,js}', './index.html'],
   theme: {
     extend: {
       colors: {
-        primary: '#ffb600',   // Primärfarbe
-        secondary: '#68d2c5', // Sekundärfarbe
+        primary: '#ffb600',
+        secondary: '#68d2c5',
       },
     },
   },
-  plugins: [],
+  plugins: [
+    require('daisyui'),
+  ],
+  daisyui: {
+    themes: ["retro"],
+  },
 };

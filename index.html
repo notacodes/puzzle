@@ -1,39 +1,91 @@
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="retro">
 <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="src/output.css" />
+    <script type="module" src="https://unpkg.com/wired-elements/lib/wired-dialog.js?module"></script>
+    <script type="module" src="https://unpkg.com/wired-elements/lib/wired-button.js?module"></script>
+    <link href="src/output.css" rel="stylesheet">
     <link rel="stylesheet" href="src/style.css" />
     <link
             href="https://fonts.googleapis.com/css?family=Gloria+Hallelujah&display=swap"
             rel="stylesheet"
     />
-    <script type="module" src="https://unpkg.com/wired-elements/lib/wired-dialog.js?module"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script type="module" src="https://unpkg.com/wired-elements/lib/wired-button.js?module"></script>
     <title>Slide Puzzle</title>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.23/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-<section id="puzzle">
-<wired-card>
-    <div id="puzzle-container"></div>
-</wired-card>
-<div>
-<wired-button class="m-6 text-2xl" elevation="2" id="shuffle" fill="red">Do Another!</wired-button>
-<wired-button class="m-6 text-2xl bg-primary" elevation="2" id="goBigger">Go Bigger</wired-button>
-    <a href="multiplayer.html" class="m-6 text-2xl bg-primary" elevation="2" id="multiplayer">Multiplayer</a>
-    <button class="bg-[#ffb600] hover:bg-[#e6a200] text-white font-bold py-2 px-4 rounded">
-        Klick mich!
-    </button>
+<body data-theme="retro">
+<div class="w-screen h-screen">
+    <div class="w-screen h-screen grid grid-cols-[1fr_3fr] grid-rows-[h-screen] gap-4">
+        <div id="navbar" class="m-9">
+            <button id="hallo" class="bg-accent w-auto rounded-box mt-3 mb-3 btn h-auto p-4 text-5xl" onclick="window.location.href='index.html?size=3';">
+                Sliding 15
+            </button>
 
-</div>
-<br><button id="copyButton">Link teilen</button>
-<h3 id="counter">0</h3>
+            <ul class="menu bg-base-200 rounded-box w-auto">
+                <p class="text-3xl m-3">Puzzles</p>
+                <li>
+                    <a class="text-2xl" href="index.html?size=3">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5">
+                            <path d="M12 4.467c0-.405.262-.75.559-1.027.276-.257.441-.584.441-.94 0-.828-.895-1.5-2-1.5s-2 .672-2 1.5c0 .362.171.694.456.953.29.265.544.6.544.994a.968.968 0 0 1-1.024.974 39.655 39.655 0 0 1-3.014-.306.75.75 0 0 0-.847.847c.14.993.242 1.999.306 3.014A.968.968 0 0 1 4.447 10c-.393 0-.729-.253-.994-.544C3.194 9.17 2.862 9 2.5 9 1.672 9 1 9.895 1 11s.672 2 1.5 2c.356 0 .683-.165.94-.441.276-.297.622-.559 1.027-.559a.997.997 0 0 1 1.004 1.03 39.747 39.747 0 0 1-.319 3.734.75.75 0 0 0 .64.842c1.05.146 2.111.252 3.184.318A.97.97 0 0 0 10 16.948c0-.394-.254-.73-.545-.995C9.171 15.693 9 15.362 9 15c0-.828.895-1.5 2-1.5s2 .672 2 1.5c0 .356-.165.683-.441.94-.297.276-.559.622-.559 1.027a.998.998 0 0 0 1.03 1.005c1.337-.05 2.659-.162 3.961-.337a.75.75 0 0 0 .644-.644c.175-1.302.288-2.624.337-3.961A.998.998 0 0 0 16.967 12c-.405 0-.75.262-1.027.559-.257.276-.584.441-.94.441-.828 0-1.5-.895-1.5-2s.672-2 1.5-2c.362 0 .694.17.953.455.265.291.601.545.995.545a.97.97 0 0 0 .976-1.024 41.159 41.159 0 0 0-.318-3.184.75.75 0 0 0-.842-.64c-1.228.164-2.473.271-3.734.319A.997.997 0 0 1 12 4.467Z" />
+                        </svg>
+                        3x3
+                    </a>
+                </li>
+                <li>
+                    <a class="text-2xl" href="index.html?size=4">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5">
+                            <path d="M12 4.467c0-.405.262-.75.559-1.027.276-.257.441-.584.441-.94 0-.828-.895-1.5-2-1.5s-2 .672-2 1.5c0 .362.171.694.456.953.29.265.544.6.544.994a.968.968 0 0 1-1.024.974 39.655 39.655 0 0 1-3.014-.306.75.75 0 0 0-.847.847c.14.993.242 1.999.306 3.014A.968.968 0 0 1 4.447 10c-.393 0-.729-.253-.994-.544C3.194 9.17 2.862 9 2.5 9 1.672 9 1 9.895 1 11s.672 2 1.5 2c.356 0 .683-.165.94-.441.276-.297.622-.559 1.027-.559a.997.997 0 0 1 1.004 1.03 39.747 39.747 0 0 1-.319 3.734.75.75 0 0 0 .64.842c1.05.146 2.111.252 3.184.318A.97.97 0 0 0 10 16.948c0-.394-.254-.73-.545-.995C9.171 15.693 9 15.362 9 15c0-.828.895-1.5 2-1.5s2 .672 2 1.5c0 .356-.165.683-.441.94-.297.276-.559.622-.559 1.027a.998.998 0 0 0 1.03 1.005c1.337-.05 2.659-.162 3.961-.337a.75.75 0 0 0 .644-.644c.175-1.302.288-2.624.337-3.961A.998.998 0 0 0 16.967 12c-.405 0-.75.262-1.027.559-.257.276-.584.441-.94.441-.828 0-1.5-.895-1.5-2s.672-2 1.5-2c.362 0 .694.17.953.455.265.291.601.545.995.545a.97.97 0 0 0 .976-1.024 41.159 41.159 0 0 0-.318-3.184.75.75 0 0 0-.842-.64c-1.228.164-2.473.271-3.734.319A.997.997 0 0 1 12 4.467Z" />
+                        </svg>
+                        4x4
+                    </a>
+                </li>
+                <li>
+                    <a class="text-2xl" href="multiplayer.html">
+                        <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="h-5 w-5"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor">
+                            <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                        </svg>
+                        Multiplayer
+                    </a>
+                </li>
+            </ul>
+            <div class="bg-secondary w-auto rounded-box mt-3 mb-3">
+                <p class="p-4 text-2xl" id="puzzle-seed">Puzzle#059345345</p>
+                <div class="bg-secondary w-auto rounded-box mt-3 mb-3">
+                    <div class="flex justify-between">
+                    <p class="p-4 text-xl ">Best Moves:</p><p id="best-moves" class="text-xl p-4"></p>
+                    </div>
+                    <div class="flex justify-between">
+                    <p class="p-4 text-xl">Best Time:</p><p id="best-time" class="text-xl p-4"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+<div id="puzzle" class="my-10 flex items-center justify-center">
+    <div id="alert-container" class="w-1/5"></div>
+    <wired-card class="p-4 bg-base-100 shadow-lg">
+        <div id="puzzle-container" class="grid grid-cols-4 gap-2  p-4 rounded-lg"></div>
+    </wired-card>
+    <div>
+        <button class="m-4 text-xl btn btn-secondary" id="shuffle">Do Another!</button>
+        <button id="copyButton" class="btn btn-accent m-4 text-xl">Share this Shuffle</button>
+        <button class="m-4 text-xl btn btn-primary" id="goBigger">Go Bigger</button>
+    </div>
+    <h3 id="counter">0</h3>
     <h3 id="timer">00:00</h3>
-<div id="results"></div>
+    <div id="results"></div>
     <wired-dialog closed class="w-60">
         <div id="dialog-content">
             <h1 class="mb-4 text-4xl" id="dialog-title">Congratulations!</h1>
@@ -41,8 +93,10 @@
             <wired-button id="dialog-close">Close</wired-button>
         </div>
     </wired-dialog>
-</section>
+</div>
 <script type="module" src="script.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+</div>
+</div>
 </body>
 </html>
