@@ -130,6 +130,9 @@
           <button id="leaveLobby" class="btn btn-primary m-1 " style="display: none;">Leave Lobby</button>
         </div>
       </div>
+      <div class="bg-success w-auto rounded-box mt-3 mb-3 p-3">
+        <p class="text-xl">You can now play against up to 10 players!</p>
+      </div>
     </div>
     <div class="flex items-center justify-center flex-col">
       <p class="text-6xl mb-10">Multiplayer Puzzle</p>
@@ -216,6 +219,7 @@
             updatePlayerList(data.players);
             break;
           case 'gameStarted':
+            console.log('Game started');
             document.getElementById('playagain-container').style.display = 'none';
             document.getElementById('container').style.display = 'block';
             document.getElementById('lobbystart').style.display = 'none';
