@@ -38,7 +38,7 @@ wss.on('connection', ws => {
                     players: [{
                         socket: ws,
                         name: playerName,
-                        lobby: lobbyCode // Speichere Lobby-Code im Spielerobjekt
+                        lobby: lobbyCode
                     }],
                     gameStarted: false
                 };

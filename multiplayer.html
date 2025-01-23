@@ -159,96 +159,124 @@
   </div>
 </div>
 <script>
-  const socket = new WebSocket('wss://one5puzzle-server.onrender.com');
-
+  const socketUrl = "wss://one5puzzle-server.onrender.com";
+  let socket;
   let lobbyCode = null;
   let tilesize = 100;
   let size = 3;
   let isLobbyCreator = false;
 
-  socket.onopen = () => {
-    console.log('WebSocket connection opened.');
-  };
 
-  socket.onclose = () => {
-    console.log('WebSocket connection closed.');
-  };
+  function connectSocket() {
+    try {
+      console.log("Versuche, eine Verbindung zum WebSocket herzustellen...");
 
+      socket = new WebSocket(socketUrl);
 
-  socket.onmessage = (event) => {
-    const data = JSON.parse(event.data);
+      socket.onopen = () => {
+        console.log("WebSocket-Verbindung hergestellt.");
+      };
 
-    switch (data.action) {
-      case 'lobbyCreated':
-        showCustomAlert(`Lobby created! Code: ${data.code}`);
-        document.getElementById('copyLobbyCode').style.display = 'block';
-        lobbyCode = data.code;
-        isLobbyCreator = true;
-        document.getElementById('lobbycode').innerText = `Lobby#${lobbyCode}`;
-        size = data.size;
-        document.getElementById('lobbystart').style.display = 'block';
-        document.getElementById('leaveLobby').style.display = 'block';
-        updatePlayerList(data.players);
-        break;
-      case 'lobbyJoined':
-        document.getElementById('copyLobbyCode').style.display = 'block';
-        showCustomAlert(`Successfully joined the ${data.code} lobby!`);
-        size = data.size;
-        document.getElementById('lobbycode').innerText = `Lobby#${data.code}`;
-        document.getElementById('leaveLobby').style.display = 'block';
-        updatePlayerList(data.players);
-        break;
-      case 'lobbyNotFound':
-        showCustomAlertW('Lobby code not found. Please check the code and try again.');
-        document.getElementById('lobby-options').style.display = 'block';
-        document.getElementById('container').style.display = 'none';
-        break;
-      case 'leftLobby':
-        const containerdiv = document.getElementById('container');
-        container.innerHTML = '';
-        showCustomAlert('You have left the lobby');
-        resetLobbyState();
-        break;
-      case 'updatePlayerList':
-        updatePlayerList(data.players);
-        break;
-      case 'gameStarted':
-        document.getElementById('container').style.display = 'block';
-        document.getElementById('lobbystart').style.display = 'none';
-        const container = document.getElementById('container');
-        container.innerHTML = '';
+      socket.onmessage = (event) => {
+        const data = JSON.parse(event.data);
 
-        const wiredCard = document.createElement('wired-card');
-        const puzzleContainer = document.createElement('div');
-        puzzleContainer.id = 'puzzle-container';
-        wiredCard.appendChild(puzzleContainer);
-        container.appendChild(wiredCard);
+        switch (data.action) {
+          case 'lobbyCreated':
+            showCustomAlert(`Lobby created! Code: ${data.code}`);
+            document.getElementById('copyLobbyCode').style.display = 'block';
+            lobbyCode = data.code;
+            isLobbyCreator = true;
+            document.getElementById('lobbycode').innerText = `Lobby#${lobbyCode}`;
+            size = data.size;
+            document.getElementById('lobbystart').style.display = 'block';
+            document.getElementById('leaveLobby').style.display = 'block';
+            updatePlayerList(data.players);
+            break;
+          case 'lobbyJoined':
+            document.getElementById('container').style.display = 'block';
+            document.getElementById('copyLobbyCode').style.display = 'block';
+            showCustomAlert(`Successfully joined the ${data.code} lobby!`);
+            size = data.size;
+            document.getElementById('lobbycode').innerText = `Lobby#${data.code}`;
+            document.getElementById('leaveLobby').style.display = 'block';
+            updatePlayerList(data.players);
+            break;
+          case 'lobbyNotFound':
+            showCustomAlertW('Lobby code not found. Please check the code and try again.');
+            document.getElementById('lobby-options').style.display = 'block';
+            document.getElementById('container').style.display = 'none';
+            break;
+          case 'leftLobby':
+            const containerdiv = document.getElementById('container');
+            container.innerHTML = '';
+            showCustomAlert('You have left the lobby');
+            resetLobbyState();
+            break;
+          case 'updatePlayerList':
+            updatePlayerList(data.players);
+            break;
+          case 'gameStarted':
+            document.getElementById('playagain-container').style.display = 'none';
+            document.getElementById('container').style.display = 'block';
+            document.getElementById('lobbystart').style.display = 'none';
+            const container = document.getElementById('container');
+            container.innerHTML = '';
 
-        puzzleContainer.style.width = `${size * tilesize}px`;
-        puzzleContainer.style.height = `${size * tilesize}px`;
+            const wiredCard = document.createElement('wired-card');
+            const puzzleContainer = document.createElement('div');
+            puzzleContainer.id = 'puzzle-container';
+            wiredCard.appendChild(puzzleContainer);
+            container.appendChild(wiredCard);
 
-        puzzle = data.puzzle;
-        renderPuzzle();
-        break;
-      case 'updatePuzzle':
-        puzzle = data.puzzle;
-        renderPuzzle(puzzle);
-        break;
-      case 'gameOver':
-        clearPuzzle();
-        showCustomAlert('The puzzle has been solved!');
-        document.getElementById('container').style.display = 'none';
-        if (isLobbyCreator) {
-          document.getElementById('playagain-container').style.display = 'block';
+            puzzleContainer.style.width = `${size * tilesize}px`;
+            puzzleContainer.style.height = `${size * tilesize}px`;
+
+            puzzle = data.puzzle;
+            renderPuzzle();
+            break;
+          case 'updatePuzzle':
+            puzzle = data.puzzle;
+            renderPuzzle(puzzle);
+            break;
+          case 'gameOver':
+            clearPuzzle();
+            showCustomAlert('The puzzle has been solved!');
+            document.getElementById('container').style.display = 'none';
+            if (isLobbyCreator) {
+              document.getElementById('playagain-container').style.display = 'block';
+            }
+            break;
+          case 'newHost':
+            showCustomAlert('You are now the host.');
+            assignNewHost();
+            document.getElementById('lobbystart').style.display = 'block';
+            break;
         }
-        break;
-      case 'newHost':
-        showCustomAlert('You are now the host.');
-        assignNewHost();
-        document.getElementById('lobbystart').style.display = 'block';
-        break;
+      };
+
+      socket.onerror = (error) => {
+        console.error("WebSocket-Fehler:", error);
+        showCustomAlertServer();
+      };
+
+      socket.onclose = () => {
+        console.warn("WebSocket-Verbindung geschlossen. Versuche erneut...");
+        reconnectSocket();
+      };
+    } catch (err) {
+      console.error("Fehler beim Herstellen der WebSocket-Verbindung:", err);
+      reconnectSocket();
     }
-  };
+  }
+
+  function reconnectSocket() {
+    setTimeout(() => {
+      console.log("Erneuter Verbindungsversuch...");
+      connectSocket();
+    }, 5000);
+  }
+
+  window.onload = connectSocket;
 
   function updatePlayerList(players) {
     const playerListContent = document.getElementById('playerListContent');
@@ -308,13 +336,14 @@
   function resetLobbyState() {
     lobbyCode = null;
     isLobbyCreator = false;
-    document.getElementById('lobbycode').innerText = 'Lobby#??';
+    document.getElementById('lobbycode').innerText = 'Lobby#???';
     document.getElementById('startGame').style.display = 'none';
     document.getElementById('playAgain').style.display = 'none';
     document.getElementById('leaveLobby').style.display = 'none';
     document.getElementById('playerListContent').innerHTML = '';
     document.getElementById('copyLobbyCode').style.display = 'none';
     document.getElementById('lobby-options').style.display = 'block';
+    document.getElementById('container').style.display = 'none';
     clearPuzzle();
   }
 
@@ -363,6 +392,32 @@
     setTimeout(() => {
       alert.remove();
     }, 2500);
+  }
+  function showCustomAlertServer() {
+    const message = 'The server is taking a quick nap and should wake up within a minute.Thanks for your patience!'
+    const alertContainer = document.getElementById('alert-container');
+    const alert = document.createElement('div');
+    alert.setAttribute('role', 'alert');
+    alert.className = 'alert alert-warning';
+    alert.innerHTML = `
+        <svg
+    xmlns="http://www.w3.org/2000/svg"
+    class="h-6 w-6 shrink-0 stroke-current"
+    fill="none"
+    viewBox="0 0 24 24">
+    <path
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="2"
+      d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+  </svg>
+        <span>${message}</span>
+    `;
+    alertContainer.appendChild(alert);
+    setTimeout(() => {
+      alert.remove();
+    }, 5500);
+
   }
   function Celebration() {
     var count = 230;
@@ -416,7 +471,7 @@
       }
       document.body.removeChild(tempInput);
     } else {
-      showCustomAlert('No lobby code available to copy.');
+      showCustomAlertW('No lobby code available to copy.');
     }
   };
 </script>
