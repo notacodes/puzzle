@@ -1,4 +1,3 @@
-const puzzleContainer = document.querySelector("#puzzle-container");
 let puzzle = []; // Initialize the puzzle variable
 handleInput();
 
@@ -12,7 +11,8 @@ function getCol(pos) {
 }
 
 function renderPuzzle() {
-    puzzleContainer.innerHTML = ""; // Clear puzzle container
+    const puzzleContainer = document.querySelector("#puzzle-container");
+    puzzleContainer.innerHTML = "";
     for (let puzzleItem of puzzle) {
         const tile = document.createElement("wired-button");
         tile.classList.add("puzzle-item"); // Uniform styling

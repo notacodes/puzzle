@@ -117,14 +117,11 @@
       </div>
     </div>
 
-    <div class="flex items-center justify-center">
-      <wired-card>
-        <div id="puzzle-container">
-
-        </div>
-      </wired-card>
+    <div class="flex items-center justify-center flex-col">
+      <p class="text-6xl mb-10">Multiplayer Puzzle</p>
+      <div id="container">
+      </div>
     </div>
-
     <div class="bg-primary w-auto rounded-box mt-3 mb-3">
       <input type="text" id="playerNameInput" placeholder="Dein Name" class="input input-bordered w-full max-w-xs mb-2">
       <button id="createLobby" class="btn btn-secondary">Create Lobby</button>
@@ -180,6 +177,8 @@
         updatePlayerList(data.players);
         break;
       case 'leftLobby':
+        const containerdiv = document.getElementById('container');
+        container.innerHTML = ''; // Clear any existing content
         alert('Du hast die Lobby verlassen.');
         resetLobbyState();
         break;
@@ -187,9 +186,18 @@
         updatePlayerList(data.players);
         break;
       case 'gameStarted':
-        const puzzleContainer = document.querySelector("#puzzle-container");
+        const container = document.getElementById('container');
+        container.innerHTML = ''; // Clear any existing content
+
+        const wiredCard = document.createElement('wired-card');
+        const puzzleContainer = document.createElement('div');
+        puzzleContainer.id = 'puzzle-container';
+        wiredCard.appendChild(puzzleContainer);
+        container.appendChild(wiredCard);
+
         puzzleContainer.style.width = `${size * tilesize}px`;
         puzzleContainer.style.height = `${size * tilesize}px`;
+
         puzzle = data.puzzle;
         renderPuzzle();
         break;
