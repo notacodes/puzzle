@@ -137,6 +137,7 @@
       <button id="joinLobby" class="btn btn-secondary">Tritt der Lobby bei</button>
       <button class="btn btn-secondary" id="startGame" style="display: none;">Start Game</button>
       <button id="playAgain" class="btn btn-secondary" style="display: none;">Play Again</button>
+      <button id="leaveLobby" class="btn btn-secondary" style="display: none;">Leave Lobby</button>
     </div>
   </div>
 </div>
@@ -168,13 +169,19 @@
         document.getElementById('lobbycode').innerText = `Lobby#${lobbyCode}`;
         size = data.size;
         document.getElementById('startGame').style.display = 'block';
+        document.getElementById('leaveLobby').style.display = 'block';
         updatePlayerList(data.players);
         break;
       case 'lobbyJoined':
         alert(`Erfolgreich der Lobby ${data.code} beigetreten!`);
         size = data.size;
         document.getElementById('lobbycode').innerText = `Lobby#${data.code}`;
+        document.getElementById('leaveLobby').style.display = 'block';
         updatePlayerList(data.players);
+        break;
+      case 'leftLobby':
+        alert('Du hast die Lobby verlassen.');
+        resetLobbyState();
         break;
       case 'updatePlayerList':
         updatePlayerList(data.players);
@@ -196,6 +203,10 @@
         if (isLobbyCreator) {
           document.getElementById('playAgain').style.display = 'block';
         }
+        break;
+      case 'newHost':
+        alert('You are now the host.');
+        assignNewHost();
         break;
     }
   };
@@ -233,7 +244,7 @@
       alert('Bitte gib deinen Namen ein');
       return;
     }
-    const code = document.getElementById('lobbyCodeInput').value;
+    const code = document.getElementById('lobbyCodeInput').value.trim(); // Trim whitespace
     socket.send(JSON.stringify({
       action: 'joinLobby',
       code,
@@ -247,6 +258,25 @@
     socket.send(JSON.stringify({ action: 'startGame', size: size }));
     document.getElementById('playAgain').style.display = 'none';
   };
+  document.getElementById('leaveLobby').onclick = () => {
+    socket.send(JSON.stringify({ action: 'leaveLobby', code: lobbyCode }));
+    resetLobbyState();
+  };
+  function resetLobbyState() {
+    lobbyCode = null;
+    isLobbyCreator = false;
+    document.getElementById('lobbycode').innerText = 'Lobby#??';
+    document.getElementById('startGame').style.display = 'none';
+    document.getElementById('playAgain').style.display = 'none';
+    document.getElementById('leaveLobby').style.display = 'none';
+    document.getElementById('playerListContent').innerHTML = '';
+    clearPuzzle();
+  }
+
+  function assignNewHost() {
+    isLobbyCreator = true;
+    document.getElementById('startGame').style.display = 'block';
+  }
 </script>
 <script src="script_multiplayer.js"></script>
 </body>
