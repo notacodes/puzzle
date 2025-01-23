@@ -305,4 +305,3 @@ function handleLeaveLobby(socket, lobbyCode, playerName) {
     // Bestätigung an den Spieler, der die Lobby verlässt
     socket.send(JSON.stringify({ action: 'leftLobby' }));
 }
-

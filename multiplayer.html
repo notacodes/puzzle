@@ -59,11 +59,18 @@
       justify-content: center;
       align-items: center;
     }
+    #alert-container {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 300px;
+      z-index: 1000;
+    }
   </style>
 </head>
 <body data-theme="retro">
 <div class="w-screen h-screen">
-  <div class="w-screen h-screen grid grid-cols-[1fr_3fr] grid-rows-[h-screen] gap-4">
+  <div class="w-screen h-screen grid grid-cols-[1fr_2fr_1fr] grid-rows-[h-screen] gap-4">
 
     <div class="m-6">
       <button id="hallo" class="bg-accent w-auto rounded-box mt-3 mb-3 btn h-auto p-4 text-5xl" onclick="window.location.href='index.html?size=3';">
@@ -107,17 +114,23 @@
         </li>
       </ul>
       <div class="bg-secondary w-auto rounded-box mt-3 mb-3 p-3">
-        <p class="p-2 text-2xl" id="lobbycode">Lobby#???</p>
+        <div id="lobby-code-container" class="flex items-center">
+          <p class="text-2xl mr-6" id="lobbycode">Lobby#???</p>
+          <button id="copyLobbyCode" class="btn btn-square btn-sm" style="display: none;">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 0 1 1.242 7.244l-4.5 4.5a4.5 4.5 0 0 1-6.364-6.364l1.757-1.757m13.35-.622 1.757-1.757a4.5 4.5 0 0 0-6.364-6.364l-4.5 4.5a4.5 4.5 0 0 0 1.242 7.244" />
+            </svg>
+          </button>
+        </div>
         <div class="bg-secondary w-auto rounded-box mt-3 mb-3">
           <div id="playerList" class="bg-secondary rounded-box p-2">
             <p class="text-xl">Spieler in der Lobby:</p>
             <ul id="playerListContent"></ul>
           </div>
-          <button id="leaveLobby" class="btn btn-primary m-3 mb-3" style="display: none;">Leave Lobby</button>
+          <button id="leaveLobby" class="btn btn-primary m-1 " style="display: none;">Leave Lobby</button>
         </div>
       </div>
     </div>
-
     <div class="flex items-center justify-center flex-col">
       <p class="text-6xl mb-10">Multiplayer Puzzle</p>
       <div id="lobby-options">
@@ -142,6 +155,7 @@
       <div id="container" style="display: none;">
       </div>
     </div>
+    <div id="alert-container" class="w-1/5"></div>
   </div>
 </div>
 <script>
@@ -166,7 +180,8 @@
 
     switch (data.action) {
       case 'lobbyCreated':
-        alert(`Lobby erstellt! Code: ${data.code}`);
+        showCustomAlert(`Lobby created! Code: ${data.code}`);
+        document.getElementById('copyLobbyCode').style.display = 'block';
         lobbyCode = data.code;
         isLobbyCreator = true;
         document.getElementById('lobbycode').innerText = `Lobby#${lobbyCode}`;
@@ -176,16 +191,22 @@
         updatePlayerList(data.players);
         break;
       case 'lobbyJoined':
-        alert(`Erfolgreich der Lobby ${data.code} beigetreten!`);
+        document.getElementById('copyLobbyCode').style.display = 'block';
+        showCustomAlert(`Successfully joined the ${data.code} lobby!`);
         size = data.size;
         document.getElementById('lobbycode').innerText = `Lobby#${data.code}`;
         document.getElementById('leaveLobby').style.display = 'block';
         updatePlayerList(data.players);
         break;
+      case 'lobbyNotFound':
+        showCustomAlertW('Lobby code not found. Please check the code and try again.');
+        document.getElementById('lobby-options').style.display = 'block';
+        document.getElementById('container').style.display = 'none';
+        break;
       case 'leftLobby':
         const containerdiv = document.getElementById('container');
         container.innerHTML = '';
-        alert('Du hast die Lobby verlassen.');
+        showCustomAlert('You have left the lobby');
         resetLobbyState();
         break;
       case 'updatePlayerList':
@@ -215,14 +236,14 @@
         break;
       case 'gameOver':
         clearPuzzle();
-        alert('Das Puzzle wurde gelöst!');
+        showCustomAlert('The puzzle has been solved!');
         document.getElementById('container').style.display = 'none';
         if (isLobbyCreator) {
           document.getElementById('playagain-container').style.display = 'block';
         }
         break;
       case 'newHost':
-        alert('You are now the host.');
+        showCustomAlert('You are now the host.');
         assignNewHost();
         document.getElementById('lobbystart').style.display = 'block';
         break;
@@ -243,7 +264,7 @@
   document.getElementById('createLobby').onclick = () => {
     const playerName = document.getElementById('playerNameInput').value.trim();
     if (!playerName) {
-      alert('Bitte gib deinen Namen ein');
+      showCustomAlertW('Please enter your name!');
       return;
     }
     const size = document.getElementById('puzzleSize').value;
@@ -260,7 +281,7 @@
   document.getElementById('joinLobby').onclick = () => {
     const playerName = document.getElementById('playerNameInputJoin').value.trim();
     if (!playerName) {
-      alert('Bitte gib deinen Namen ein');
+      showCustomAlertW('Please enter your name!');
       return;
     }
     const code = document.getElementById('lobbyCodeInput').value.trim(); // Trim whitespace
@@ -292,6 +313,7 @@
     document.getElementById('playAgain').style.display = 'none';
     document.getElementById('leaveLobby').style.display = 'none';
     document.getElementById('playerListContent').innerHTML = '';
+    document.getElementById('copyLobbyCode').style.display = 'none';
     clearPuzzle();
   }
 
@@ -299,7 +321,105 @@
     isLobbyCreator = true;
     document.getElementById('startGame').style.display = 'block';
   }
+  function showCustomAlert(message) {
+    const alertContainer = document.getElementById('alert-container');
+    const alert = document.createElement('div');
+    alert.setAttribute('role', 'alert');
+    alert.className = 'alert alert-success';
+    alert.innerHTML = `
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <span>${message}</span>
+    `;
+    alertContainer.appendChild(alert);
+
+    setTimeout(() => {
+      alert.remove();
+    }, 2500);
+  }
+  function showCustomAlertW(message) {
+    const alertContainer = document.getElementById('alert-container');
+    const alert = document.createElement('div');
+    alert.setAttribute('role', 'alert');
+    alert.className = 'alert alert-warning';
+    alert.innerHTML = `
+        <svg
+    xmlns="http://www.w3.org/2000/svg"
+    class="h-6 w-6 shrink-0 stroke-current"
+    fill="none"
+    viewBox="0 0 24 24">
+    <path
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="2"
+      d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+  </svg>
+        <span>${message}</span>
+    `;
+    alertContainer.appendChild(alert);
+
+    setTimeout(() => {
+      alert.remove();
+    }, 2500);
+  }
+  function Celebration() {
+    var count = 230;
+    var defaults = {
+      origin: { y: 0.7 }
+    };
+
+    function fire(particleRatio, opts) {
+      confetti({
+        ...defaults,
+        ...opts,
+        particleCount: Math.floor(count * particleRatio)
+      });
+    }
+
+    fire(0.25, {
+      spread: 26,
+      startVelocity: 55,
+    });
+    fire(0.2, {
+      spread: 60,
+    });
+    fire(0.35, {
+      spread: 100,
+      decay: 0.91,
+      scalar: 0.8
+    });
+    fire(0.1, {
+      spread: 120,
+      startVelocity: 25,
+      decay: 0.92,
+      scalar: 1.2
+    });
+    fire(0.1, {
+      spread: 120,
+      startVelocity: 45,
+    });
+  }
+  document.getElementById('copyLobbyCode').onclick = () => {
+    if (lobbyCode) {
+      const tempInput = document.createElement('input');
+      document.body.appendChild(tempInput);
+      tempInput.value = lobbyCode;
+      tempInput.select();
+      tempInput.setSelectionRange(0, 99999);
+      try {
+        document.execCommand('copy');
+        showCustomAlert('Lobby code copied to clipboard!');
+      } catch (err) {
+        console.error('Failed to copy lobby code:', err);
+      }
+      document.body.removeChild(tempInput);
+    } else {
+      showCustomAlert('No lobby code available to copy.');
+    }
+  };
 </script>
 <script src="script_multiplayer.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
 </body>
 </html>

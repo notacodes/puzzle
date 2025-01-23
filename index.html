@@ -19,7 +19,7 @@
 </head>
 <body data-theme="retro">
 <div class="w-screen h-screen">
-    <div class="w-screen h-screen grid grid-cols-[1fr_3fr] grid-rows-[h-screen] gap-4">
+    <div class="w-screen h-screen grid grid-cols-[1fr_2fr_1fr] grid-rows-[h-screen] gap-4">
         <div id="navbar" class="m-6">
             <button id="hallo" class="bg-accent w-auto rounded-box mt-3 mb-3 btn h-auto p-4 text-5xl" onclick="window.location.href='index.html?size=3';">
                 Sliding 15
@@ -86,13 +86,6 @@
     <h3 id="counter">0</h3>
     <h3 id="timer">00:00</h3>
     <div id="results"></div>
-    <wired-dialog closed class="w-60">
-        <div id="dialog-content">
-            <h1 class="mb-4 text-4xl" id="dialog-title">Congratulations!</h1>
-            <p id="dialog-text">You solved the puzzle in <span id="dialog-moves">0</span> moves.</p>
-            <wired-button id="dialog-close">Close</wired-button>
-        </div>
-    </wired-dialog>
 </div>
 <script type="module" src="script.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>

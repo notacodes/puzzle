@@ -68,6 +68,7 @@ function moveTileIfValid(tile, emptyTile) {
                 action: 'puzzleSolved',
             }));
             console.log("Puzzle solved");
+            Celebration();
         }
     }
 }

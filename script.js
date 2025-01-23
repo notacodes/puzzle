@@ -298,13 +298,8 @@ function loadResults() {
 
 document.addEventListener("DOMContentLoaded", loadResults);
 
-const dialog = document.querySelector('wired-dialog');
-dialog.open = false;
 
-const closeButton = document.getElementById("dialog-close");
-closeButton.addEventListener("click", () => {
-    dialog.open = false;
-});
+
 
 function Celebration() {
     var count = 230;
@@ -342,15 +337,6 @@ function Celebration() {
         spread: 120,
         startVelocity: 45,
     });
-}
-
-function solved() {
-    stopTimer();
-    puzzleContainer.innerHTML = "";
-    let dialogMoves = document.getElementById("dialog-moves");
-    dialogMoves.innerHTML = counter;
-    dialog.open = true;
-    Celebration();
 }
 
 function startTimer() {
@@ -474,3 +460,10 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log("Hllo");
     });
 });
+
+function solved() {
+    stopTimer();
+    puzzleContainer.innerHTML = "";
+    Celebration();
+}
+
