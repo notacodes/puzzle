@@ -128,6 +128,7 @@
     </div>
 
     <div class="bg-primary w-auto rounded-box mt-3 mb-3">
+      <input type="text" id="playerNameInput" placeholder="Dein Name" class="input input-bordered w-full max-w-xs mb-2">
       <button id="createLobby" class="btn btn-secondary">Create Lobby</button>
       <select id="puzzleSize" class="select select-bordered w-full max-w-xs">
         <option value="3">3x3</option>
@@ -136,9 +137,12 @@
       </select>
       <input type="text" id="lobbyCodeInput" placeholder="Lobby Code" class="input input-bordered w-full max-w-xs">
       <button id="joinLobby" class="btn btn-secondary">Tritt der Lobby bei</button>
-      <button class="btn btn-secondary" id="startGame">Start Game</button>
+      <div id="playerList" class="bg-secondary rounded-box p-2">
+        <p class="text-xl">Spieler in der Lobby:</p>
+        <ul id="playerListContent"></ul>
+      </div>
+      <button class="btn btn-secondary" id="startGame" style="display: none;">Start Game</button>
     </div>
-
   </div>
 </div>
 <script>
@@ -147,6 +151,17 @@
   let lobbyCode = null;
   let tilesize = 100;
   let size = 3;
+  let isLobbyCreator = false;
+
+  socket.onopen = () => {
+    console.log('WebSocket connection opened.');
+  };
+
+  socket.onclose = () => {
+    console.log('WebSocket connection closed.');
+  };
+
+
   socket.onmessage = (event) => {
     const data = JSON.parse(event.data);
 
@@ -154,21 +169,26 @@
       case 'lobbyCreated':
         alert(`Lobby erstellt! Code: ${data.code}`);
         lobbyCode = data.code;
+        isLobbyCreator = true;
         document.getElementById('lobbycode').innerText = `Lobby#${lobbyCode}`;
         size = data.size;
+        document.getElementById('startGame').style.display = 'block';
+        updatePlayerList(data.players);
         break;
       case 'lobbyJoined':
         alert(`Erfolgreich der Lobby ${data.code} beigetreten!`);
         size = data.size;
         document.getElementById('lobbycode').innerText = `Lobby#${data.code}`;
-        console.log(size);
+        updatePlayerList(data.players);
+        break;
+      case 'updatePlayerList':
+        updatePlayerList(data.players);
         break;
       case 'gameStarted':
         const puzzleContainer = document.querySelector("#puzzle-container");
         puzzleContainer.style.width = `${size * tilesize}px`;
         puzzleContainer.style.height = `${size * tilesize}px`;
         puzzle = data.puzzle;
-        console.log(puzzle);
         renderPuzzle();
         break;
       case 'updatePuzzle':
@@ -181,19 +201,49 @@
         break;
     }
   };
+
+  function updatePlayerList(players) {
+    const playerListContent = document.getElementById('playerListContent');
+    playerListContent.innerHTML = '';
+    players.forEach(player => {
+      const li = document.createElement('li');
+      li.textContent = player.name;
+      playerListContent.appendChild(li);
+    });
+
+    document.getElementById('startGame').style.display =
+            (isLobbyCreator && players.length === 2) ? 'block' : 'none';
+  }
+
   document.getElementById('createLobby').onclick = () => {
+    const playerName = document.getElementById('playerNameInput').value.trim();
+    if (!playerName) {
+      alert('Bitte gib deinen Namen ein');
+      return;
+    }
     const size = document.getElementById('puzzleSize').value;
-    socket.send(JSON.stringify({ action: 'createLobby', size: parseInt(size) }));
+    socket.send(JSON.stringify({
+      action: 'createLobby',
+      size: parseInt(size),
+      playerName: playerName
+    }));
   };
 
   document.getElementById('joinLobby').onclick = () => {
+    const playerName = document.getElementById('playerNameInput').value.trim();
+    if (!playerName) {
+      alert('Bitte gib deinen Namen ein');
+      return;
+    }
     const code = document.getElementById('lobbyCodeInput').value;
-    socket.send(JSON.stringify({ action: 'joinLobby', code }));
+    socket.send(JSON.stringify({
+      action: 'joinLobby',
+      code,
+      playerName: playerName
+    }));
   };
-
   document.getElementById('startGame').onclick = () => {
-    const size = parseInt(document.getElementById('puzzleSize').value);
-    socket.send(JSON.stringify({ action: 'startGame',size: size }));
+    socket.send(JSON.stringify({ action: 'startGame', size: size }));
   };
 </script>
 <script src="script_multiplayer.js"></script>

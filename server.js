@@ -1,11 +1,22 @@
 const WebSocket = require('ws');
 const http = require('http');
-const server = http.createServer();
+
+// HTTP-Server erstellen
+const server = http.createServer((req, res) => {
+    if (req.method === 'GET' && req.url === '/') {
+        res.writeHead(200, { 'Content-Type': 'text/plain' });
+        res.end('Hello, welcome to the WebSocket server!');
+    } else {
+        res.writeHead(404, { 'Content-Type': 'text/plain' });
+        res.end('Not Found');
+    }
+});
+
+// WebSocket-Server erstellen
 const wss = new WebSocket.Server({ server });
 
 let lobbies = {};
 let puzzles = {};
-
 
 function generateLobbyCode() {
     return Math.random().toString(36).substring(2, 8).toUpperCase();
@@ -15,33 +26,82 @@ wss.on('connection', ws => {
     let currentLobby = null;
     console.log('Player connected.');
 
-    // Nachrichten
     ws.on('message', message => {
         const data = JSON.parse(message);
 
         switch (data.action) {
             case 'createLobby':
                 const lobbyCode = generateLobbyCode();
-                lobbies[lobbyCode] = { players: [ws], gameStarted: false };
-                puzzles[lobbyCode] = { puzzle: [], size: 3, tilesize: 100, completed: false };
-                ws.send(JSON.stringify({ action: 'lobbyCreated', code: lobbyCode }));
+                const size = data.size || 3;
+                const playerName = data.playerName;
+
+                lobbies[lobbyCode] = {
+                    players: [{
+                        socket: ws,
+                        name: playerName
+                    }],
+                    gameStarted: false
+                };
+
+                puzzles[lobbyCode] = {
+                    puzzle: [],
+                    size: size,
+                    tilesize: 100,
+                    completed: false
+                };
+
+                ws.send(JSON.stringify({
+                    action: 'lobbyCreated',
+                    code: lobbyCode,
+                    size: size,
+                    players: lobbies[lobbyCode].players.map(p => ({ name: p.name }))
+                }));
+
                 currentLobby = lobbyCode;
                 break;
 
             case 'joinLobby':
                 if (lobbies[data.code] && lobbies[data.code].players.length < 2) {
-                    if (lobbies[data.code].players.includes(ws)) {
-                        ws.send(JSON.stringify({ action: 'error', message: 'Cannot join your own lobby.' }));
-                    } else {
-                        lobbies[data.code].players.push(ws);
-                        currentLobby = data.code;
-                        ws.send(JSON.stringify({ action: 'lobbyJoined', code: data.code }));
+                    const existingPlayers = lobbies[data.code].players;
+
+                    // Check if player with this name already exists
+                    if (existingPlayers.some(p => p.name === data.playerName)) {
+                        ws.send(JSON.stringify({
+                            action: 'error',
+                            message: 'Ein Spieler mit diesem Namen existiert bereits in der Lobby.'
+                        }));
+                        return;
                     }
+
+                    // Add new player
+                    existingPlayers.push({
+                        socket: ws,
+                        name: data.playerName
+                    });
+
+                    currentLobby = data.code;
+
+                    // Broadcast updated player list to all players in lobby
+                    existingPlayers.forEach(player => {
+                        player.socket.send(JSON.stringify({
+                            action: 'updatePlayerList',
+                            players: existingPlayers.map(p => ({ name: p.name }))
+                        }));
+                    });
+
+                    ws.send(JSON.stringify({
+                        action: 'lobbyJoined',
+                        code: data.code,
+                        size: puzzles[data.code].size,
+                        players: existingPlayers.map(p => ({ name: p.name }))
+                    }));
                 } else {
-                    ws.send(JSON.stringify({ action: 'lobbyFull', message: 'Lobby ist voll oder existiert nicht.' }));
+                    ws.send(JSON.stringify({
+                        action: 'lobbyFull',
+                        message: 'Lobby ist voll oder existiert nicht.'
+                    }));
                 }
                 break;
-
 
             case 'startGame':
                 if (lobbies[currentLobby] && lobbies[currentLobby].players.length === 2 && !lobbies[currentLobby].gameStarted && !puzzles[currentLobby].completed) {
@@ -50,7 +110,7 @@ wss.on('connection', ws => {
                     const puzzle = generatePuzzle(currentLobby);
 
                     lobbies[currentLobby].players.forEach(player => {
-                        player.send(JSON.stringify({ action: 'gameStarted', puzzle }));
+                        player.socket.send(JSON.stringify({ action: 'gameStarted', puzzle }));
                     });
                 }
                 break;
@@ -62,10 +122,17 @@ wss.on('connection', ws => {
                     checkIfSolved(currentLobby);
                 }
                 break;
+
             case 'puzzleSolved':
+                console.log('Puzzle solved');
                 puzzles[currentLobby].completed = true;
                 lobbies[currentLobby].players.forEach(player => {
-                    player.send(JSON.stringify({ action: 'gameOver' }));
+                    console.log('Player object:', player); // Add this line to log the player object
+                    if (player.socket && typeof player.socket.send === 'function') {
+                        player.socket.send(JSON.stringify({ action: 'gameOver' }));
+                    } else {
+                        console.error('Player socket is not defined or send is not a function');
+                    }
                 });
                 break;
         }
@@ -102,7 +169,6 @@ function generatePuzzle(currentLobby) {
     return puzzles[currentLobby].puzzle;
 }
 
-
 function createPuzzle(size, tilesize, currentLobby) {
     for (let i = 1; i <= size * size; i++) {
         puzzles[currentLobby].puzzle.push({
@@ -114,7 +180,6 @@ function createPuzzle(size, tilesize, currentLobby) {
         });
     }
 }
-
 
 function randomizePuzzle(size, currentLobby) {
     const puzzle = puzzles[currentLobby].puzzle;
@@ -140,8 +205,6 @@ function randomizePuzzle(size, currentLobby) {
     } while (correctTileCount > 3);
 }
 
-
-
 function isPuzzleValid(size, currentLobby) {
     let inversions = 0;
     const values = puzzles[currentLobby].puzzle.map((item) => item.value);
@@ -159,14 +222,12 @@ function validateEmptyPuzzle(currentLobby) {
     return puzzles[currentLobby].puzzle.filter((item) => item.disabled).length === 1;
 }
 
-
 function syncPuzzleToPlayers(lobbyCode) {
     const puzzle = puzzles[lobbyCode].puzzle;
     lobbies[lobbyCode].players.forEach(player => {
-        player.send(JSON.stringify({ action: 'updatePuzzle', puzzle }));
+        player.socket.send(JSON.stringify({ action: 'updatePuzzle', puzzle }));
     });
 }
-
 
 function getRandomValues(size) {
     const values = Array.from({ length: size * size }, (_, i) => i + 1);
@@ -181,6 +242,7 @@ function getCol(pos, size) {
     const col = pos % size;
     return col === 0 ? size : col;
 }
+
 function countCorrectTiles(currentLobby) {
     const puzzle = puzzles[currentLobby].puzzle;
     let correctTiles = 0;
@@ -192,5 +254,6 @@ function countCorrectTiles(currentLobby) {
     return correctTiles;
 }
 
-
-server.listen(8080, () => console.log('Server is running...'));
+// Port für Render oder lokalen Server
+const PORT = process.env.PORT || 8080;
+server.listen(PORT, () => console.log(`Server läuft auf Port ${PORT}`));

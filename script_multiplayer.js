@@ -1,6 +1,6 @@
 const puzzleContainer = document.querySelector("#puzzle-container");
+let puzzle = []; // Initialize the puzzle variable
 handleInput();
-
 
 function getRow(pos) {
     return Math.ceil(pos / size);
@@ -11,26 +11,23 @@ function getCol(pos) {
     return col === 0 ? size : col;
 }
 
-
 function renderPuzzle() {
-    puzzleContainer.innerHTML = ""; // Puzzle-Container leeren
+    puzzleContainer.innerHTML = ""; // Clear puzzle container
     for (let puzzleItem of puzzle) {
         const tile = document.createElement("wired-button");
-        tile.classList.add("puzzle-item"); // Einheitliches Styling
+        tile.classList.add("puzzle-item"); // Uniform styling
         tile.style.left = `${puzzleItem.x}px`;
         tile.style.top = `${puzzleItem.y}px`;
         tile.innerHTML = puzzleItem.disabled ? "" : `<p id="puzzle-number" class="puzzle-text">${puzzleItem.value}</p>`;
 
-        // Leeres Puzzle-Teil kennzeichnen
+        // Mark empty puzzle piece
         if (puzzleItem.disabled) tile.classList.add("empty");
 
-        // Event-Listener für Klick hinzufügen
+        // Add event listener for click
         tile.addEventListener("click", () => handleTileClick(puzzleItem));
-        puzzleContainer.appendChild(tile); // Element in den Container einfügen
+        puzzleContainer.appendChild(tile); // Append element to container
     }
 }
-
-
 
 function handleInput() {
     document.addEventListener("keydown", handleKeyDown);
@@ -72,11 +69,10 @@ function moveTileIfValid(tile, emptyTile) {
             socket.send(JSON.stringify({
                 action: 'puzzleSolved',
             }));
-            console.log("Puzzle gelöst");
+            console.log("Puzzle solved");
         }
     }
 }
-
 
 function getTileByPosition(pos, condition) {
     return condition ? puzzle.find((tile) => tile.position === pos) : null;
@@ -85,7 +81,6 @@ function getTileByPosition(pos, condition) {
 function getEmptyPuzzle() {
     return puzzle.find((tile) => tile.disabled);
 }
-
 
 function isPuzzleSolved() {
     for (let i = 0; i < puzzle.length; i++) {
