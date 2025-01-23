@@ -20,10 +20,8 @@ function renderPuzzle() {
         tile.style.top = `${puzzleItem.y}px`;
         tile.innerHTML = puzzleItem.disabled ? "" : `<p id="puzzle-number" class="puzzle-text">${puzzleItem.value}</p>`;
 
-        // Mark empty puzzle piece
         if (puzzleItem.disabled) tile.classList.add("empty");
 
-        // Add event listener for click
         tile.addEventListener("click", () => handleTileClick(puzzleItem));
         puzzleContainer.appendChild(tile); // Append element to container
     }

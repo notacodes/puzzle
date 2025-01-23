@@ -109,11 +109,9 @@
       <div class="bg-secondary w-auto rounded-box mt-3 mb-3">
         <p class="p-4 text-2xl" id="lobbycode">Lobby#??</p>
         <div class="bg-secondary w-auto rounded-box mt-3 mb-3">
-          <div class="flex justify-between">
-            <p class="p-4 text-xl ">Best Moves:</p><p id="best-moves" class="text-xl p-4"></p>
-          </div>
-          <div class="flex justify-between">
-            <p class="p-4 text-xl">Best Time:</p><p id="best-time" class="text-xl p-4"></p>
+          <div id="playerList" class="bg-secondary rounded-box p-2">
+            <p class="text-xl">Spieler in der Lobby:</p>
+            <ul id="playerListContent"></ul>
           </div>
         </div>
       </div>
@@ -137,11 +135,8 @@
       </select>
       <input type="text" id="lobbyCodeInput" placeholder="Lobby Code" class="input input-bordered w-full max-w-xs">
       <button id="joinLobby" class="btn btn-secondary">Tritt der Lobby bei</button>
-      <div id="playerList" class="bg-secondary rounded-box p-2">
-        <p class="text-xl">Spieler in der Lobby:</p>
-        <ul id="playerListContent"></ul>
-      </div>
       <button class="btn btn-secondary" id="startGame" style="display: none;">Start Game</button>
+      <button id="playAgain" class="btn btn-secondary" style="display: none;">Play Again</button>
     </div>
   </div>
 </div>
@@ -198,6 +193,9 @@
       case 'gameOver':
         clearPuzzle();
         alert('Das Puzzle wurde gelöst!');
+        if (isLobbyCreator) {
+          document.getElementById('playAgain').style.display = 'block';
+        }
         break;
     }
   };
@@ -244,6 +242,10 @@
   };
   document.getElementById('startGame').onclick = () => {
     socket.send(JSON.stringify({ action: 'startGame', size: size }));
+  };
+  document.getElementById('playAgain').onclick = () => {
+    socket.send(JSON.stringify({ action: 'startGame', size: size }));
+    document.getElementById('playAgain').style.display = 'none';
   };
 </script>
 <script src="script_multiplayer.js"></script>
