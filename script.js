@@ -451,19 +451,43 @@ function showCustomAlert(message) {
     }, 2500);
 }
 
-document.querySelector('button[onclick^="showCustomAlert"]').addEventListener('click', function() {
-    showCustomAlert('Your purchase has been confirmed!');
-});
-
-document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('hallo').addEventListener('click', () => {
-        console.log("Hllo");
-    });
-});
-
 function solved() {
     stopTimer();
     puzzleContainer.innerHTML = "";
     Celebration();
 }
+function getDailySeed() {
+    const today = new Date();
+    const dateString = today.getFullYear() * 10000 +
+        (today.getMonth() + 1) * 100 +
+        today.getDate();
 
+    const storedSeedData = localStorage.getItem('dailySeed');
+
+    if (storedSeedData) {
+        const parsedData = JSON.parse(storedSeedData);
+
+        if (parsedData.date === dateString) {
+            return parsedData.seed;
+        }
+    }
+
+    const newSeed = Math.floor(Math.random() * 1000000);
+
+    localStorage.setItem('dailySeed', JSON.stringify({
+        date: dateString,
+        seed: newSeed
+    }));
+
+    return newSeed;
+}
+
+function dailychallenge() {
+    const dailySeed = getDailySeed();
+    console.log("mwe");
+    const dailyChallengeLink = document.getElementById('daily-challange');
+        dailyChallengeLink.href = `index.html?seed=${dailySeed}&size=3`;
+
+}
+
+document.addEventListener('DOMContentLoaded', dailychallenge);

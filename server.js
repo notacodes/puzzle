@@ -1,7 +1,6 @@
 const WebSocket = require('ws');
 const http = require('http');
 
-// HTTP-Server erstellen
 const server = http.createServer((req, res) => {
     if (req.method === 'GET' && req.url === '/') {
         res.writeHead(200, { 'Content-Type': 'text/plain' });
@@ -12,7 +11,6 @@ const server = http.createServer((req, res) => {
     }
 });
 
-// WebSocket-Server erstellen
 const wss = new WebSocket.Server({ server });
 
 let lobbies = {};
@@ -38,7 +36,7 @@ wss.on('connection', ws => {
                     players: [{
                         socket: ws,
                         name: playerName,
-                        lobby: lobbyCode
+                        lobby: lobbyCode // Speichere Lobby-Code im Spielerobjekt
                     }],
                     gameStarted: false
                 };
@@ -62,10 +60,15 @@ wss.on('connection', ws => {
                 break;
 
             case 'joinLobby':
+                if (!lobbies[data.code]) {
+                    ws.send(JSON.stringify({
+                        action: 'lobbyNotFound'
+                    }));
+                    return;
+                }
                 if (lobbies[data.code] && lobbies[data.code].players.length < 2) {
                     const existingPlayers = lobbies[data.code].players;
 
-                    // Check if player with this name already exists
                     if (existingPlayers.some(p => p.name === data.playerName)) {
                         ws.send(JSON.stringify({
                             action: 'error',
@@ -80,7 +83,7 @@ wss.on('connection', ws => {
                         lobby: data.code // Speichere Lobby-Referenz
                     });
 
-                    ws.lobbyCode = data.code; // Setze den Lobby-Code im WebSocket
+                    ws.lobbyCode = data.code;
 
                     existingPlayers.forEach(player => {
                         player.socket.send(JSON.stringify({
@@ -305,3 +308,24 @@ function handleLeaveLobby(socket, lobbyCode, playerName) {
     // Bestätigung an den Spieler, der die Lobby verlässt
     socket.send(JSON.stringify({ action: 'leftLobby' }));
 }
+function removePlayerFromAllLobbies(socket) {
+    for (const lobbyCode in lobbies) {
+        const lobby = lobbies[lobbyCode];
+        lobby.players = lobby.players.filter(player => player.socket !== socket);
+
+        if (lobby.players.length === 0) {
+            delete lobbies[lobbyCode];
+            delete puzzles[lobbyCode];
+            console.log(`Lobby ${lobbyCode} deleted.`);
+        } else {
+            lobby.players.forEach(player => {
+                player.socket.send(JSON.stringify({
+                    action: 'updatePlayerList',
+                    players: lobby.players.map(p => ({ name: p.name }))
+                }));
+            });
+        }
+    }
+    socket.send(JSON.stringify({ action: 'removedFromAllLobbies' }));
+}
+
