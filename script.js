@@ -64,16 +64,14 @@ function isPuzzleSolvable() {
         }
     }
 
-    // Find the position of the empty tile (row from bottom)
     const emptyTile = puzzle.find(tile => tile.disabled);
     const emptyRow = Math.ceil(emptyTile.position / size);
     const rowFromBottom = size - emptyRow + 1;
 
-    // For odd grid sizes, the number of inversions must be even
     if (size % 2 === 1) {
         return inversions % 2 === 0;
     }
-    // For even grid sizes, the sum of inversions and the row of the empty tile (from bottom) must be odd
+
     else {
         return (inversions + rowFromBottom) % 2 === 1;
     }
