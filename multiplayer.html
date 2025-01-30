@@ -131,6 +131,7 @@
         </div>
       </div>
       <div class="bg-warning w-auto rounded-box mt-3 mb-3 p-3">
+        <p class="text-xl">Occasional server delays may cause the site to respond in up to 2 minutes. Thanks for your patience!</p>
         <p class="text-xl">Occasional server delays may cause the site to respond in up to 1 minutes. Thanks for your patience!</p>
       </div>
     </div>
@@ -294,9 +295,7 @@
       li.textContent = player.name;
       playerListContent.appendChild(li);
     });
-document.getElementById('lobby-options').style.display = 'none';
-    document.getElementById('lobbystart').style.display = 'block';
-    document.getElementById('container').style.display = 'block';
+
   }
 
   document.getElementById('createLobby').onclick = () => {
@@ -311,7 +310,9 @@ document.getElementById('lobby-options').style.display = 'none';
       size: parseInt(size),
       playerName: playerName
     }));
-  
+    document.getElementById('lobby-options').style.display = 'none';
+    document.getElementById('lobbystart').style.display = 'block';
+    document.getElementById('container').style.display = 'block';
   };
 
   document.getElementById('joinLobby').onclick = () => {
