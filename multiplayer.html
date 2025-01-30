@@ -294,7 +294,9 @@
       li.textContent = player.name;
       playerListContent.appendChild(li);
     });
-
+document.getElementById('lobby-options').style.display = 'none';
+    document.getElementById('lobbystart').style.display = 'block';
+    document.getElementById('container').style.display = 'block';
   }
 
   document.getElementById('createLobby').onclick = () => {
@@ -309,7 +311,7 @@
       size: parseInt(size),
       playerName: playerName
     }));
-
+  
   };
 
   document.getElementById('joinLobby').onclick = () => {
