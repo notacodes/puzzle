@@ -20,10 +20,10 @@
 </head>
 <body data-theme="retro">
 <div class="w-screen h-screen">
-    <div class="w-screen h-screen grid grid-cols-[1fr_2fr_1fr] grid-rows-[h-screen] gap-4">
+    <div class="w-screen h-screen grid grid-cols-[1fr_3fr] grid-rows-[h-screen] gap-4">
         <div id="navbar" class="m-6">
             <button id="hallo" class="bg-accent w-auto rounded-box mt-3 mb-3 btn h-auto p-4 text-5xl" onclick="window.location.href='index.html?size=3';">
-                Test
+                Sliding 15
             </button>
             <ul class="menu bg-base-200 rounded-box w-auto">
                 <p class="text-3xl m-3">Puzzles</p>
@@ -71,35 +71,13 @@
                     </a>
                 </li>
             </ul>
-            <div class="bg-secondary w-auto rounded-box mt-3 mb-3">
-                <p class="p-4 text-2xl" id="puzzle-seed">Puzzle#059345345</p>
-                <div class="bg-secondary w-auto rounded-box mt-3 mb-3">
-                    <div class="flex justify-between">
-                    <p class="p-4 text-xl ">Best Moves:</p><p id="best-moves" class="text-xl p-4"></p>
-                    </div>
-                    <div class="flex justify-between">
-                    <p class="p-4 text-xl">Best Time:</p><p id="best-time" class="text-xl p-4"></p>
-                    </div>
-                </div>
-            </div>
         </div>
-<div id="puzzle" class="my-10 flex items-center justify-center">
-    <div id="alert-container" class="w-1/5"></div>
-    <wired-card class="p-4 bg-base-100 shadow-lg">
-        <div id="puzzle-container" class="grid grid-cols-4 gap-2  p-4 rounded-lg"></div>
-    </wired-card>
-    <div>
-        <button class="m-4 text-xl btn btn-secondary" id="shuffle">Do Another!</button>
-        <button id="copyButton" class="btn btn-accent m-4 text-xl">Share this Shuffle</button>
-        <button class="m-4 text-xl btn btn-primary" id="goBigger">Go Bigger</button>
+        <div id="puzzle" class="my-10 flex items-center justify-center">
+            <p class="text-6xl p-4">You have solved the Daily Puzzle !!</p>
+        </div>
+        <script type="module" src="daily-challenge.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     </div>
-    <h3 id="counter">0</h3>
-    <h3 id="timer">00:00</h3>
-    <div id="results"></div>
-</div>
-<script type="module" src="script.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
-</div>
 </div>
 </body>
 </html>

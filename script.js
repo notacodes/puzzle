@@ -29,7 +29,6 @@ function randomizePuzzleWithSeed(seed) {
     do {
         const randomValues = getRandomValuesWithSeed(seed);
         let i = 0;
-
         for (let puzzleItem of puzzle) {
             puzzleItem.value = randomValues[i];
             puzzleItem.disabled = false;
@@ -199,6 +198,11 @@ function moveTileIfValid(tile, emptyTile) {
             updateResults();
             counter = 0;
             updateCounter();
+            solved = isdailyChallengeSolved();
+            console.log(solved)
+            if (solved === true){
+                markDailyChallengeAsSolved();
+            }
         }
     }
 }
@@ -456,36 +460,80 @@ function solved() {
 }
 function getDailySeed() {
     const today = new Date();
-    const dateString = today.getFullYear() * 10000 +
-        (today.getMonth() + 1) * 100 +
-        today.getDate();
-
-    const storedSeedData = localStorage.getItem('dailySeed');
-
+    let dateString = today.getFullYear() + today.getMonth() + today.getDate();
+    let storedSeedData = localStorage.getItem('dailySeed');
     if (storedSeedData) {
-        const parsedData = JSON.parse(storedSeedData);
+        let parsedData = JSON.parse(storedSeedData);
+        console.log(parsedData.date);
+        console.log(dateString);
+
 
         if (parsedData.date === dateString) {
-            return parsedData.seed;
+            if (parsedData.isSolved) {
+                return;
+            }
+        }else{
+            const newSeed = Math.floor(Math.random() * 1000000);
+            storedSeedData = {
+                date: dateString,
+                seed: newSeed,
+                isSolved: false
+            };
+            localStorage.setItem('dailySeed', JSON.stringify(storedSeedData));
         }
+    } else {
+        const newSeed = Math.floor(Math.random() * 1000000);
+        storedSeedData = {
+            date: dateString,
+            seed: newSeed,
+            isSolved: false
+        };
+        localStorage.setItem('dailySeed', JSON.stringify(storedSeedData));
+    }
+}
+
+
+function markDailyChallengeAsSolved() {
+    let storedSeedData = localStorage.getItem('dailySeed');
+    if (storedSeedData) {
+        let parsedData = JSON.parse(storedSeedData);
+        parsedData.isSolved = true;
+        localStorage.setItem('dailySeed', JSON.stringify(parsedData));
+    }
+}
+
+
+document.addEventListener('DOMContentLoaded',getDailySeed);
+
+function isdailyChallengeSolved(){
+    const urlParams = new URLSearchParams(window.location.search);
+    const seed = urlParams.get("seed");
+    console.log(seed);
+    const storedSeedData = localStorage.getItem('dailySeed');
+    const storedSeed = JSON.parse(storedSeedData);
+    console.log(storedSeed.seed);
+
+    if (String(storedSeed.seed) === String(seed)) {
+        return true;
+    }
+    else{
+        return false;
     }
 
-    const newSeed = Math.floor(Math.random() * 1000000);
-
-    localStorage.setItem('dailySeed', JSON.stringify({
-        date: dateString,
-        seed: newSeed
-    }));
-
-    return newSeed;
 }
 
-function dailychallenge() {
-    const dailySeed = getDailySeed();
-    console.log("mwe");
-    const dailyChallengeLink = document.getElementById('daily-challange');
-        dailyChallengeLink.href = `index.html?seed=${dailySeed}&size=3`;
+const link = document.getElementById("daily-challange");
+link.addEventListener("click", keineAhnungHabKeinNamen)
 
+function keineAhnungHabKeinNamen() {
+    let storedSeedData = localStorage.getItem('dailySeed');
+    let parsedData = JSON.parse(storedSeedData);
+    if (parsedData.isSolved) {
+        window.location.href = `daily-challenge.html`;
+    }else{
+        window.location.href = `index.html?seed=${parsedData.seed}&size=4`;
+    }
 }
 
-document.addEventListener('DOMContentLoaded', dailychallenge);
+
+
