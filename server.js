@@ -1,3 +1,9 @@
+/*
+
+Nicht aktuelle Server Datei !!
+Aktueller Server: https://github.com/notacodes/15puzzle-server
+
+*/
 const WebSocket = require('ws');
 const http = require('http');
 

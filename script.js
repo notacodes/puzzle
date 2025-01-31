@@ -501,6 +501,7 @@ function markDailyChallengeAsSolved() {
         let parsedData = JSON.parse(storedSeedData);
         parsedData.isSolved = true;
         localStorage.setItem('dailySeed', JSON.stringify(parsedData));
+        updateStreak();
     }
 }
 
@@ -537,5 +538,42 @@ function keineAhnungHabKeinNamen() {
     }
 }
 
+function updateStreak() {
+    const today = new Date();
+    const dateString = today.toISOString().split('T')[0];
+
+    let streakData = JSON.parse(localStorage.getItem('dailyStreak')) || { currentStreak: 0, lastSolvedDate: null };
+
+    if (streakData.lastSolvedDate === dateString) {
+        return;
+    }
+
+    if (streakData.lastSolvedDate) {
+        const lastSolvedDate = new Date(streakData.lastSolvedDate);
+        console.log((today - lastSolvedDate));
+        const differenceInDays = Math.floor((today - lastSolvedDate) / (1000 * 60 * 60 * 24));
+
+        if (differenceInDays === 1) {
+            streakData.currentStreak++;
+        } else if (differenceInDays > 1) {
+            streakData.currentStreak = 1;
+        }
+    } else {
+        streakData.currentStreak = 1;
+    }
+
+    streakData.lastSolvedDate = dateString;
+    localStorage.setItem('dailyStreak', JSON.stringify(streakData));
+
+    displayStreak();
+}
+
+function displayStreak() {
+    const streakData = JSON.parse(localStorage.getItem('dailyStreak'));
+    const streakElement = document.getElementById('streak');
+    streakElement.textContent = streakData.currentStreak;
+}
+
+document.addEventListener('DOMContentLoaded',displayStreak);
 
 
