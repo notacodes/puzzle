@@ -177,7 +177,7 @@
   </div>
 </div>
 <script>
-  const socketUrl = "wss://one5puzzle-server.onrender.com";
+  const socketUrl = "ws://localhost:8080/ws";
   let socket;
   let lobbyCode = null;
   let tilesize = 100;
@@ -216,6 +216,7 @@
             document.getElementById('copyLobbyCode').style.display = 'block';
             showCustomAlert(`Successfully joined the ${data.code} lobby!`);
             size = data.size;
+            console.log(size);
             document.getElementById('lobbycode').innerText = `Lobby#${data.code}`;
             document.getElementById('leaveLobby').style.display = 'block';
             updatePlayerList(data.players);
@@ -273,6 +274,9 @@
             assignNewHost(data.lobbyCode);
             document.getElementById('lobbystart').style.display = 'block';
             break;
+            case 'error':
+                showCustomAlertW(data.message);
+                break;
         }
       };
 
@@ -301,15 +305,14 @@
 
   window.onload = connectSocket;
 
-  function updatePlayerList(players) {
+  function updatePlayerList(playerNames) {
     const playerListContent = document.getElementById('playerListContent');
     playerListContent.innerHTML = '';
-    players.forEach(player => {
+    playerNames.forEach(name => {
       const li = document.createElement('li');
-      li.textContent = player.name;
+      li.textContent = name;
       playerListContent.appendChild(li);
     });
-
   }
 
   document.getElementById('createLobby').onclick = () => {
@@ -350,10 +353,10 @@
     document.getElementById('lobby-options').style.display = 'none';
   };
   document.getElementById('startGame').onclick = () => {
-    socket.send(JSON.stringify({ action: 'startGame', size: size }));
+    socket.send(JSON.stringify({ action: 'startGame', size: size, code: lobbyCode }));
   };
   document.getElementById('playAgain').onclick = () => {
-    socket.send(JSON.stringify({ action: 'startGame', size: size }));
+    socket.send(JSON.stringify({ action: 'startGame', size: size, code: lobbyCode }));
     document.getElementById('playagain-container').style.display = 'none';
     document.getElementById('container').style.display = 'block';
   };
@@ -449,7 +452,7 @@
     alertContainer.appendChild(alert);
     setTimeout(() => {
       alert.remove();
-    }, 5500);
+    }, 5000);
 
   }
   function Celebration() {
