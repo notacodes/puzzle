@@ -229,7 +229,11 @@ goBigger.addEventListener("click", biggerPuzzle);
 function biggerPuzzle() {
     resetTimer();
     madeFirstMove = false;
-    size++;
+    if(size < 8){
+        size++;
+    }else{
+        showCustomAlertW("Whoops! You've hit the puzzle limit. Time to take a breather!")
+    }
     puzzle = [];
     puzzleContainer.style.width = `${size * tilesize}px`;
     puzzleContainer.style.height = `${size * tilesize}px`;
@@ -499,6 +503,8 @@ function markDailyChallengeAsSolved() {
         let parsedData = JSON.parse(storedSeedData);
         parsedData.isSolved = true;
         localStorage.setItem('dailySeed', JSON.stringify(parsedData));
+        updateStreak();
+        window.location.href = "daily-challenge.html";
     }
 }
 
@@ -523,9 +529,9 @@ function isdailyChallengeSolved(){
 }
 
 const link = document.getElementById("daily-challange");
-link.addEventListener("click", keineAhnungHabKeinNamen)
+link.addEventListener("click", onClickDailyChallenge)
 
-function keineAhnungHabKeinNamen() {
+function onClickDailyChallenge() {
     let storedSeedData = localStorage.getItem('dailySeed');
     let parsedData = JSON.parse(storedSeedData);
     if (parsedData.isSolved) {
@@ -535,5 +541,69 @@ function keineAhnungHabKeinNamen() {
     }
 }
 
+function updateStreak() {
+    const today = new Date();
+    const dateString = today.toISOString().split('T')[0];
+
+    let streakData = JSON.parse(localStorage.getItem('dailyStreak')) || { currentStreak: 0, lastSolvedDate: null };
+
+    if (streakData.lastSolvedDate === dateString) {
+        return;
+    }
+
+    if (streakData.lastSolvedDate) {
+        const lastSolvedDate = new Date(streakData.lastSolvedDate);
+        console.log((today - lastSolvedDate));
+        const MS_PER_DAY = 1000 * 60 * 60 * 24;
+        const differenceInDays = Math.floor((today - lastSolvedDate) / MS_PER_DAY);
+
+        if (differenceInDays === 1) {
+            streakData.currentStreak++;
+        } else if (differenceInDays > 1) {
+            streakData.currentStreak = 1;
+        }
+    } else {
+        streakData.currentStreak = 1;
+    }
+
+    streakData.lastSolvedDate = dateString;
+    localStorage.setItem('dailyStreak', JSON.stringify(streakData));
+
+    displayStreak();
+}
+
+function displayStreak() {
+    const streakData = JSON.parse(localStorage.getItem('dailyStreak'));
+    const streakElement = document.getElementById('streak');
+    streakElement.textContent = streakData.currentStreak;
+}
+
+document.addEventListener('DOMContentLoaded',displayStreak);
+
+function showCustomAlertW(message) {
+    const alertContainer = document.getElementById('alert-container');
+    const alert = document.createElement('div');
+    alert.setAttribute('role', 'alert');
+    alert.className = 'alert alert-warning';
+    alert.innerHTML = `
+        <svg
+    xmlns="http://www.w3.org/2000/svg"
+    class="h-6 w-6 shrink-0 stroke-current"
+    fill="none"
+    viewBox="0 0 24 24">
+    <path
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="2"
+      d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+  </svg>
+        <span>${message}</span>
+    `;
+    alertContainer.appendChild(alert);
+
+    setTimeout(() => {
+        alert.remove();
+    }, 3000);
+}
 
 

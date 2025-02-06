@@ -96,6 +96,21 @@
           </a>
         </li>
         <li>
+          <button id="daily-challange" class="text-2xl">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" />
+            </svg>
+            Daily Challenge
+            <div class="flex flex-row" >
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-8">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15.362 5.214A8.252 8.252 0 0 1 12 21 8.25 8.25 0 0 1 6.038 7.047 8.287 8.287 0 0 0 9 9.601a8.983 8.983 0 0 1 3.361-6.867 8.21 8.21 0 0 0 3 2.48Z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 18a3.75 3.75 0 0 0 .495-7.468 5.99 5.99 0 0 0-1.925 3.547 5.975 5.975 0 0 1-2.133-1.001A3.75 3.75 0 0 0 12 18Z" />
+              </svg>
+              <p id="streak">0</p>
+            </div>
+          </button>
+        </li>
+        <li>
           <a class="text-2xl" href="multiplayer.html">
             <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -162,7 +177,7 @@
   </div>
 </div>
 <script>
-  const socketUrl = "wss://one5puzzle-server.onrender.com";
+  const socketUrl = "ws://localhost:8080/ws";
   let socket;
   let lobbyCode = null;
   let tilesize = 100;
@@ -201,6 +216,7 @@
             document.getElementById('copyLobbyCode').style.display = 'block';
             showCustomAlert(`Successfully joined the ${data.code} lobby!`);
             size = data.size;
+            console.log(size);
             document.getElementById('lobbycode').innerText = `Lobby#${data.code}`;
             document.getElementById('leaveLobby').style.display = 'block';
             updatePlayerList(data.players);
@@ -258,6 +274,9 @@
             assignNewHost(data.lobbyCode);
             document.getElementById('lobbystart').style.display = 'block';
             break;
+            case 'error':
+                showCustomAlertW(data.message);
+                break;
         }
       };
 
@@ -286,15 +305,14 @@
 
   window.onload = connectSocket;
 
-  function updatePlayerList(players) {
+  function updatePlayerList(playerNames) {
     const playerListContent = document.getElementById('playerListContent');
     playerListContent.innerHTML = '';
-    players.forEach(player => {
+    playerNames.forEach(name => {
       const li = document.createElement('li');
-      li.textContent = player.name;
+      li.textContent = name;
       playerListContent.appendChild(li);
     });
-
   }
 
   document.getElementById('createLobby').onclick = () => {
@@ -335,10 +353,10 @@
     document.getElementById('lobby-options').style.display = 'none';
   };
   document.getElementById('startGame').onclick = () => {
-    socket.send(JSON.stringify({ action: 'startGame', size: size }));
+    socket.send(JSON.stringify({ action: 'startGame', size: size, code: lobbyCode }));
   };
   document.getElementById('playAgain').onclick = () => {
-    socket.send(JSON.stringify({ action: 'startGame', size: size }));
+    socket.send(JSON.stringify({ action: 'startGame', size: size, code: lobbyCode }));
     document.getElementById('playagain-container').style.display = 'none';
     document.getElementById('container').style.display = 'block';
   };
@@ -434,7 +452,7 @@
     alertContainer.appendChild(alert);
     setTimeout(() => {
       alert.remove();
-    }, 5500);
+    }, 5000);
 
   }
   function Celebration() {
@@ -493,6 +511,63 @@
     }
   };
 
+  function getDailySeed() {
+    const today = new Date();
+    let dateString = today.getFullYear() + today.getMonth() + today.getDate();
+    let storedSeedData = localStorage.getItem('dailySeed');
+    if (storedSeedData) {
+      let parsedData = JSON.parse(storedSeedData);
+      console.log(parsedData.date);
+      console.log(dateString);
+
+
+      if (parsedData.date === dateString) {
+        if (parsedData.isSolved) {
+          return;
+        }
+      }else{
+        const newSeed = Math.floor(Math.random() * 1000000);
+        storedSeedData = {
+          date: dateString,
+          seed: newSeed,
+          isSolved: false
+        };
+        localStorage.setItem('dailySeed', JSON.stringify(storedSeedData));
+      }
+    } else {
+      const newSeed = Math.floor(Math.random() * 1000000);
+      storedSeedData = {
+        date: dateString,
+        seed: newSeed,
+        isSolved: false
+      };
+      localStorage.setItem('dailySeed', JSON.stringify(storedSeedData));
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded',getDailySeed);
+
+
+  const link = document.getElementById("daily-challange");
+  link.addEventListener("click", keineAhnungHabKeinNamen)
+
+  function keineAhnungHabKeinNamen() {
+    let storedSeedData = localStorage.getItem('dailySeed');
+    let parsedData = JSON.parse(storedSeedData);
+    if (parsedData.isSolved) {
+      window.location.href = `daily-challenge.html`;
+    }else{
+      window.location.href = `index.html?seed=${parsedData.seed}&size=4`;
+    }
+  }
+
+  function displayStreak() {
+    const streakData = JSON.parse(localStorage.getItem('dailyStreak'));
+    const streakElement = document.getElementById('streak');
+    streakElement.textContent = streakData.currentStreak;
+  }
+
+  document.addEventListener('DOMContentLoaded',displayStreak);
 </script>
 <script src="script_multiplayer.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>

@@ -65,7 +65,7 @@ function moveTileIfValid(tile, emptyTile) {
         renderPuzzle();
         if (isPuzzleSolved() === true) {
             socket.send(JSON.stringify({
-                action: 'puzzleSolved',
+                action: 'puzzleSolved'
             }));
             console.log("Puzzle solved");
             Celebration();

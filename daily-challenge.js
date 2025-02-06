@@ -47,3 +47,11 @@ function keineAhnungHabKeinNamen() {
        window.location.href = `index.html?seed=${parsedData.seed}&size=4`;
     }
 }
+
+function displayStreak() {
+    const streakData = JSON.parse(localStorage.getItem('dailyStreak'));
+    const streakElement = document.getElementById('streak');
+    streakElement.textContent = streakData.currentStreak;
+}
+
+document.addEventListener('DOMContentLoaded',displayStreak);
