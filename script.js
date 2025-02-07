@@ -556,7 +556,8 @@ function updateStreak() {
     if (streakData.lastSolvedDate) {
         const lastSolvedDate = new Date(streakData.lastSolvedDate);
         console.log((today - lastSolvedDate));
-        const differenceInDays = Math.floor((today - lastSolvedDate) / (1000 * 60 * 60 * 24));
+        const MS_PER_DAY = 1000 * 60 * 60 * 24;
+        const differenceInDays = Math.floor((today - lastSolvedDate) / MS_PER_DAY);
 
         if (differenceInDays === 1) {
             streakData.currentStreak++;
