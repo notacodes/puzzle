@@ -231,7 +231,7 @@ goBigger.addEventListener("click", biggerPuzzle);
 function biggerPuzzle() {
     resetTimer();
     madeFirstMove = false;
-    if(size < 8){
+    if(size < 6){
         size++;
     }else{
         showCustomAlertW("Whoops! You've hit the puzzle limit. Time to take a breather!")
