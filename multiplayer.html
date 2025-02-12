@@ -145,9 +145,6 @@
           <button id="leaveLobby" class="btn btn-primary m-1 " style="display: none;">Leave Lobby</button>
         </div>
       </div>
-      <div class="bg-warning w-auto rounded-box mt-3 mb-3 p-3">
-        <p class="text-xl">Occasional server delays may cause the site to respond in up to 2 minutes. Thanks for your patience!</p>
-      </div>
     </div>
     <div class="flex items-center justify-center flex-col">
       <p class="text-6xl mb-10">Multiplayer Puzzle</p>
@@ -211,6 +208,7 @@
             updatePlayerList(data.players);
             break;
           case 'lobbyJoined':
+            document.getElementById('lobby-options').style.display = 'none';
             document.getElementById('container').style.display = 'block';
             document.getElementById('container').innerHTML = '';
             document.getElementById('copyLobbyCode').style.display = 'block';
@@ -233,6 +231,7 @@
             resetLobbyState();
             break;
           case 'updatePlayerList':
+            console.log('Updating player list');
             updatePlayerList(data.players);
             break;
           case 'gameStarted':
@@ -264,19 +263,21 @@
             showCustomAlert('The puzzle has been solved!');
             document.getElementById('container').style.display = 'none';
             document.getElementById('container').innerHTML = '';
-            if (isLobbyCreator) {
+            if (isLobbyCreator === true) {
               document.getElementById('playagain-container').style.display = 'block';
             }
             break;
           case 'newHost':
             showCustomAlert('You are now the host.');
-            console.log(data.lobbyCode);
             assignNewHost(data.lobbyCode);
             document.getElementById('lobbystart').style.display = 'block';
             break;
             case 'error':
                 showCustomAlertW(data.message);
                 break;
+          case 'playerLeavesMidGame':
+            playerLeavesMidGame(data);
+            break;
         }
       };
 
@@ -350,7 +351,6 @@
       code,
       playerName: playerName
     }));
-    document.getElementById('lobby-options').style.display = 'none';
   };
   document.getElementById('startGame').onclick = () => {
     socket.send(JSON.stringify({ action: 'startGame', size: size, code: lobbyCode }));
@@ -368,14 +368,14 @@
     lobbyCode = null;
     isLobbyCreator = false;
     document.getElementById('lobbycode').innerText = 'Lobby#???';
-    document.getElementById('startGame').style.display = 'none';
-    document.getElementById('playAgain').style.display = 'none';
+    document.getElementById('lobbystart').style.display = 'none';
+    document.getElementById('playagain-container').style.display = 'none';
     document.getElementById('leaveLobby').style.display = 'none';
     document.getElementById('playerListContent').innerHTML = '';
     document.getElementById('copyLobbyCode').style.display = 'none';
     document.getElementById('lobby-options').style.display = 'block';
     document.getElementById('container').style.display = 'none';
-    document.getElementById('playAgain').style.display = 'none';
+    document.getElementById('playagain-container').style.display = 'none';
     clearPuzzle();
   }
 
@@ -383,7 +383,7 @@
     isLobbyCreator = true;
     lobbyCode = newLobbyCode;
     document.getElementById('startGame').style.display = 'block';
-    document.getElementById('playAgain').style.display = 'none';
+    document.getElementById('playagain-container').style.display = 'none';
     document.getElementById('copyLobbyCode').style.display = 'block';
     document.getElementById('lobbycode').innerText = `Lobby#${lobbyCode}`;
   }
@@ -427,7 +427,7 @@
 
     setTimeout(() => {
       alert.remove();
-    }, 2500);
+    }, 3500);
   }
   function showCustomAlertServer() {
     const message = 'The server is taking a quick nap and should wake up within a minute.Thanks for your patience!'
@@ -565,6 +565,17 @@
     const streakData = JSON.parse(localStorage.getItem('dailyStreak'));
     const streakElement = document.getElementById('streak');
     streakElement.textContent = streakData.currentStreak;
+  }
+
+  function playerLeavesMidGame(data) {
+    clearPuzzle();
+    document.getElementById('container').style.display = 'none';
+    document.getElementById('container').innerHTML = '';
+    if (isLobbyCreator === true) {
+      document.getElementById('playagain-container').style.display = 'block';
+    }
+    let playername = data.playername;
+    showCustomAlertW(`${playername} quit mid-game – guess they couldn't take the heat!`);
   }
 
   document.addEventListener('DOMContentLoaded',displayStreak);
