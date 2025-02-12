@@ -464,7 +464,7 @@ function solved() {
     puzzleContainer.innerHTML = "";
     Celebration();
 }
-function getDailySeed() {
+function loadDailySeedFromLocalStorage() {
     const today = new Date();
     let dateString = today.getFullYear() + today.getMonth() + today.getDate();
     let storedSeedData = localStorage.getItem('dailySeed');
@@ -475,29 +475,37 @@ function getDailySeed() {
 
 
         if (parsedData.date === dateString) {
-            if (parsedData.isSolved) {
                 return;
-            }
-        }else{
-            const newSeed = Math.floor(Math.random() * 1000000);
-            storedSeedData = {
-                date: dateString,
-                seed: newSeed,
-                isSolved: false
-            };
-            localStorage.setItem('dailySeed', JSON.stringify(storedSeedData));
         }
-    } else {
-        const newSeed = Math.floor(Math.random() * 1000000);
-        storedSeedData = {
-            date: dateString,
-            seed: newSeed,
-            isSolved: false
-        };
-        localStorage.setItem('dailySeed', JSON.stringify(storedSeedData));
     }
+    const newSeed = Math.floor(Math.random() * 1000000);
+    storedSeedData = {
+        date: dateString,
+        seed: newSeed,
+        isSolved: false
+    };
+    localStorage.setItem('dailySeed', JSON.stringify(storedSeedData));
 }
+function loadDailyStreakFromLocalStorage() {
+    let streakData = JSON.parse(localStorage.getItem('dailyStreak'));
+    if (!streakData) {
+        streakData = {
+            currentStreak: 0,
+            lastSolvedDate: null
+        };
+        localStorage.setItem('dailyStreak', JSON.stringify(streakData));
+    }else{
+        console.log(new Date());
+        console.log(new  Date(streakData.lastSolvedDate));
+        console.log(getDateDifferenceInDays(new Date(), new  Date(streakData.lastSolvedDate)));
+        if(getDateDifferenceInDays(new Date(), new Date(streakData.lastSolvedDate)) > 1) {
+            streakData.currentStreak = 0;
+            localStorage.setItem('dailyStreak', JSON.stringify(streakData));
+        }
+    }
+    displayStreak();
 
+}
 
 function markDailyChallengeAsSolved() {
     let storedSeedData = localStorage.getItem('dailySeed');
@@ -511,7 +519,7 @@ function markDailyChallengeAsSolved() {
 }
 
 
-document.addEventListener('DOMContentLoaded',getDailySeed);
+document.addEventListener('DOMContentLoaded',loadDailySeedFromLocalStorage);
 
 function isdailyChallengeSolved(){
     const urlParams = new URLSearchParams(window.location.search);
@@ -543,6 +551,11 @@ function onClickDailyChallenge() {
     }
 }
 
+function getDateDifferenceInDays(today, lastSolvedDate) {
+    const MS_PER_DAY = 1000 * 60 * 60 * 24;
+    return Math.floor((today - lastSolvedDate) / MS_PER_DAY);
+}
+
 function updateStreak() {
     const today = new Date();
     const dateString = today.toISOString().split('T')[0];
@@ -554,11 +567,9 @@ function updateStreak() {
     }
 
     if (streakData.lastSolvedDate) {
-        const lastSolvedDate = new Date(streakData.lastSolvedDate);
+        const lastSolvedDate = new  Date(streakData.lastSolvedDate);
         console.log((today - lastSolvedDate));
-        const MS_PER_DAY = 1000 * 60 * 60 * 24;
-        const differenceInDays = Math.floor((today - lastSolvedDate) / MS_PER_DAY);
-
+        const differenceInDays = getDateDifferenceInDays(today, lastSolvedDate);
         if (differenceInDays === 1) {
             streakData.currentStreak++;
         } else if (differenceInDays > 1) {
@@ -580,7 +591,7 @@ function displayStreak() {
     streakElement.textContent = streakData.currentStreak;
 }
 
-document.addEventListener('DOMContentLoaded',displayStreak);
+document.addEventListener('DOMContentLoaded',loadDailyStreakFromLocalStorage);
 
 function showCustomAlertW(message) {
     const alertContainer = document.getElementById('alert-container');
