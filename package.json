@@ -1,10 +1,10 @@
 {
-  "name": "websocket-server",
+  "name": "puzzle-project-frontend",
   "version": "1.0.0",
-  "main": "server.js",
+  "main": "public/index.html",
   "scripts": {
-    "start": "node server.js",
-    "build:css": "tailwindcss -i ./src/input.css -o ./dist/output.css --watch"
+    "start": "npm run build:css",
+    "build:css": "tailwindcss -i public/src/input.css -o ./dist/output.css --watch"
   },
   "devDependencies": {
     "tailwindcss": "^3.4.17"
