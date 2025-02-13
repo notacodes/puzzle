@@ -1,4 +1,4 @@
-let puzzle = []; // Initialize the puzzle variable
+let puzzle = [];
 handleInput();
 
 function getRow(pos) {

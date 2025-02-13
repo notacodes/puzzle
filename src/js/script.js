@@ -14,8 +14,12 @@ puzzleContainer.style.height = `${size * tilesize}px`;
 
 document.addEventListener("DOMContentLoaded", () => {
     loadPuzzleFromURL();
+    loadBestResults();
+    loadDailySeedFromLocalStorage();
+    loadDailyStreakFromLocalStorage();
     renderPuzzle();
     handleInput();
+
 });
 
 function seededRandom(seed) {
@@ -158,6 +162,10 @@ function renderPuzzle() {
 
         tile.addEventListener("click", () => handleTileClick(puzzleItem));
         puzzleContainer.appendChild(tile);
+        const copyButton = document.getElementById('copyButton');
+        if (copyButton) {
+            copyButton.addEventListener('click', copyLinkToClipboard);
+        }
     }
 }
 
@@ -289,7 +297,7 @@ function saveResults() {
     localStorage.setItem("puzzleBestTimes", JSON.stringify(bestTimes));
 }
 
-function loadResults() {
+function loadBestResults() {
     const savedResults = localStorage.getItem("puzzleResults");
     const savedBestTimes = localStorage.getItem("puzzleBestTimes");
 
@@ -304,14 +312,9 @@ function loadResults() {
     displayResults();
 }
 
-document.addEventListener("DOMContentLoaded", loadResults);
-
-
-
-
 function Celebration() {
-    var count = 230;
-    var defaults = {
+    const count = 230;
+    const defaults = {
         origin: { y: 0.7 }
     };
 
@@ -368,15 +371,6 @@ function resetTimer() {
     document.getElementById('timer').textContent = '00:00';
 }
 
-function isPuzzleToEasy() {
-    let correctTiles = 0;
-    for (let i = 0; i < puzzle.length; i++) {
-        if (puzzle[i].value === puzzle[i].position) {
-            correctTiles++;
-        }
-    }
-    return correctTiles > 3;
-}
 function handleInput() {
     document.addEventListener("keydown", handleKeyDown);
 }
@@ -433,30 +427,6 @@ function copyLinkToClipboard() {
     }
 
     document.body.removeChild(tempInput);
-}
-document.addEventListener('DOMContentLoaded', () => {
-    const copyButton = document.getElementById('copyButton');
-    if (copyButton) {
-        copyButton.addEventListener('click', copyLinkToClipboard);
-    }
-});
-
-function showCustomAlert(message) {
-    const alertContainer = document.getElementById('alert-container');
-    const alert = document.createElement('div');
-    alert.setAttribute('role', 'alert');
-    alert.className = 'alert alert-success';
-    alert.innerHTML = `
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-        <span>${message}</span>
-    `;
-    alertContainer.appendChild(alert);
-
-    setTimeout(() => {
-        alert.remove();
-    }, 2500);
 }
 
 function solved() {
@@ -517,10 +487,6 @@ function markDailyChallengeAsSolved() {
         window.location.href = "daily-challenge.html";
     }
 }
-
-
-document.addEventListener('DOMContentLoaded',loadDailySeedFromLocalStorage);
-
 function isdailyChallengeSolved(){
     const urlParams = new URLSearchParams(window.location.search);
     const seed = urlParams.get("seed");
@@ -529,12 +495,7 @@ function isdailyChallengeSolved(){
     const storedSeed = JSON.parse(storedSeedData);
     console.log(storedSeed.seed);
 
-    if (String(storedSeed.seed) === String(seed)) {
-        return true;
-    }
-    else{
-        return false;
-    }
+    return String(storedSeed.seed) === String(seed);
 
 }
 
@@ -590,8 +551,6 @@ function displayStreak() {
     const streakElement = document.getElementById('streak');
     streakElement.textContent = streakData.currentStreak;
 }
-
-document.addEventListener('DOMContentLoaded',loadDailyStreakFromLocalStorage);
 
 function showCustomAlertW(message) {
     const alertContainer = document.getElementById('alert-container');

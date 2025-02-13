@@ -1,3 +1,10 @@
+
+document.addEventListener("DOMContentLoaded", () => {
+    getDailySeed();
+    displayStreak();
+
+});
+
 function getDailySeed() {
     const today = new Date();
     let dateString = today.getFullYear() + today.getMonth() + today.getDate();
@@ -32,13 +39,10 @@ function getDailySeed() {
     }
 }
 
-document.addEventListener('DOMContentLoaded',getDailySeed);
-
-
 const link = document.getElementById("daily-challange");
-link.addEventListener("click", keineAhnungHabKeinNamen)
+link.addEventListener("click", handleDailyChallengeClick);
 
-function keineAhnungHabKeinNamen() {
+function handleDailyChallengeClick() {
     let storedSeedData = localStorage.getItem('dailySeed');
     let parsedData = JSON.parse(storedSeedData);
     if (parsedData.isSolved) {
@@ -53,5 +57,3 @@ function displayStreak() {
     const streakElement = document.getElementById('streak');
     streakElement.textContent = streakData.currentStreak;
 }
-
-document.addEventListener('DOMContentLoaded',displayStreak);
