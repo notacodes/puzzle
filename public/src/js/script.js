@@ -19,7 +19,6 @@ document.addEventListener("DOMContentLoaded", () => {
     loadDailyStreakFromLocalStorage();
     renderPuzzle();
     handleInput();
-
 });
 
 function seededRandom(seed) {
@@ -106,13 +105,11 @@ function loadPuzzleFromURL() {
 
     generatePuzzle();
     if (seed) {
-        console.log("Seed gefunden:", seed);
         randomizePuzzleWithSeed(parseInt(seed));
         const puzzlename = document.getElementById("puzzle-seed");
         puzzlename.innerHTML = `Puzzle#${seed}`;
     } else {
         const newSeed = Math.floor(Math.random() * 1000000);
-        console.log("Kein Seed gefunden. Neuer Seed generiert:", newSeed);
         randomizePuzzleWithSeed(newSeed);
         updateURLWithSeed(newSeed);
         const puzzlename = document.getElementById("puzzle-seed");
@@ -438,18 +435,13 @@ function loadDailySeedFromLocalStorage() {
     let storedSeedData = localStorage.getItem('dailySeed');
     if (storedSeedData) {
         let parsedData = JSON.parse(storedSeedData);
-        console.log(parsedData.date);
-        console.log(dateString);
-
-
         if (parsedData.date === dateString) {
                 return;
         }
     }
-    const newSeed = Math.floor(Math.random() * 1000000);
     storedSeedData = {
         date: dateString,
-        seed: newSeed,
+        seed: dateString,
         isSolved: false
     };
     localStorage.setItem('dailySeed', JSON.stringify(storedSeedData));
