@@ -23,7 +23,7 @@ function renderPuzzle() {
         if (puzzleItem.disabled) tile.classList.add("empty");
 
         tile.addEventListener("click", () => handleTileClick(puzzleItem));
-        puzzleContainer.appendChild(tile); // Append element to container
+        puzzleContainer.appendChild(tile);
     }
 }
 
