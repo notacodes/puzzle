@@ -1,4 +1,4 @@
-const socketUrl = "ws://localhost:8080/ws";
+const socketUrl = "wss://puzzle-backend-entw.apps.osu.suvanet.ch/ws";
 let socket;
 let lobbyCode = null;
 let tilesize = 100;
