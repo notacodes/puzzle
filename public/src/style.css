@@ -53,5 +53,14 @@ body {
     padding: 20px;
     height: 300px;
 }
+.footer-text {
+    position: fixed;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    font-size: 12px;
+    color: #666;
+}
 
 
