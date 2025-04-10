@@ -1,25 +1,14 @@
 # 🧩 Sliding 15 – Multiplayer Puzzle
 
-Ein klassisches Sliding-15-Puzzle – jetzt mit Multiplayer-Funktion!
+A online version of the classic 15 puzzle – with multiplayer!
 
-## 🔍 Überblick
+## 🔍 Overview
 
-Dieses Projekt ist eine digitale Version des beliebten 15-Puzzle-Spiels, bei dem die Spieler die nummerierten Kacheln in die richtige Reihenfolge bringen müssen – mit dem zusätzlichen Twist: **Online-Multiplayer**! Tritt gegen andere Spieler an und finde heraus, wer das Puzzle am schnellsten lösen kann.
+This is a browser-based version of the 15-tile sliding puzzle. Play solo or compete with others online to solve the puzzle as fast as you can.
 
 ## ⚙️ Features
 
-- Klassisches 4x4 Sliding-Puzzle
-- Online-Multiplayer mit Live-Spielstand
-- Echtzeit-Synchronisierung über WebSockets
-- Spielerstatistiken & Timer
-- Intuitive Benutzeroberfläche
-
-## 🚀 Installation
-
-```bash
-git clone https://github.com/dein-benutzername/sliding15-multiplayer.git
-cd sliding15-multiplayer
-npm install
-npm start
+- Classic 3x3, 4x4 sliding puzzle
+- Online multiplayer mode
 
 [Try it out](https://sliding15.xyz)
