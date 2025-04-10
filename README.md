@@ -12,7 +12,7 @@ This is a browser-based version of the 15-tile sliding puzzle. Play solo or comp
 - Online multiplayer mode
 - Daily challenge
 
-### 🛠️ Coming Soon
+## 🛠️ Coming Soon
 
 - Login System
 - Friends 
