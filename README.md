@@ -10,5 +10,15 @@ This is a browser-based version of the 15-tile sliding puzzle. Play solo or comp
 
 - Classic 3x3, 4x4 sliding puzzle
 - Online multiplayer mode
+- Daily challenge
+
+### 🛠️ Coming Soon
+
+- Login System
+- Friends 
+- Leaderboards  
+- Mobile support    
+- Sounds and animations  
+
 
 [Try it out](https://sliding15.xyz)
