@@ -43,7 +43,7 @@ function randomizePuzzleWithSeed(seed) {
 
         seed++;
         attempt++;
-        if (attempt > 1000) {
+        if (attempt > 10000) {
             console.error("Zu viele Versuche, ein lösbares Puzzle zu erstellen.");
             return;
         }
